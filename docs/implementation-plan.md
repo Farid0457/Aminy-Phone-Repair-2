@@ -49,7 +49,7 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 
 ## Phase 1: Front-end fixes (no business info needed)
 
-### [ ] 1.1 Extract pricing data (D-05)
+### [x] 1.1 Extract pricing data (D-05)
 - Create `public/js/data/prices.js` that exports `QUOTE_DATA` and the shared issue sets and helpers. It must contain data only, plus a header comment explaining how the owner edits prices.
 - `quote.js` imports from it. Remove the duplicated data.
 - **Accept:** the quote tool works the same for every category. Spot-check iPhone 15 Pro screen, Galaxy S24 battery, MacBook keyboard, Watch crown and Moto G84 screen.
@@ -93,7 +93,13 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 
 ---
 
-## Phase 2: Contact API (D-02, D-03)
+## Phase 2: Backend (contact API, database, admin) (D-02, D-03, D-13, D-14)
+
+Review checkpoints with the owner: **B1** = 2.0 · **B2** = 2.1–2.4 · **B3** = 2.7–2.8 · **B4** = 2.9 + 2.5
+
+### [x] 2.0 D1 database (B1)
+- `migrations/0001_create_enquiries.sql` (the `enquiries` table, with a status check and indexes), the `d1_databases` binding `DB` in `wrangler.jsonc` (placeholder id until 2.9), and the npm scripts `db:migrate:local`, `db:migrate:remote` and `db:enquiries`.
+- **Accept:** `npm run db:migrate:local` applies the migration, `npm run db:enquiries` returns `[]`, and an invalid status is rejected by the CHECK constraint.
 
 ### [ ] 2.1 Validation module + tests
 - `src/validate.js`: a pure `validateContact(body)` that returns `{ok, data, fields}` and follows **every** rule in the architecture API contract.
@@ -109,7 +115,8 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 - **Accept:** with `log`, a submission prints a well-formed email in the `wrangler dev` console.
 
 ### [ ] 2.3 `/api/contact` handler
-- `src/contact.js`. Order of checks: method → Origin → body size → JSON parse → honeypot → validate → Turnstile siteverify (`POST https://challenges.cloudflare.com/turnstile/v0/siteverify` with `secret`, `response` and `remoteip` from `CF-Connecting-IP`) → send.
+- `src/contact.js`. Order of checks: method → Origin → body size → JSON parse → honeypot → validate → Turnstile siteverify (`POST https://challenges.cloudflare.com/turnstile/v0/siteverify` with `secret`, `response` and `remoteip` from `CF-Connecting-IP`) → **INSERT into D1** → send email → `UPDATE email_sent = 1`.
+- If the email fails but the database insert worked, still return `200 {ok:true}`. The enquiry is safe and shows in the admin page with "email not sent". Return 502 only if the database insert fails **and** the email fails.
 - Return JSON as described in the contract, with `Cache-Control: no-store`.
 - Wire it into `src/worker.js`.
 - `scripts/smoke-contact.mjs` POSTs a valid payload, an invalid one, a honeypot one and a wrong-method request to `process.env.BASE_URL ?? 'http://localhost:8787'`, then prints the results.
@@ -132,6 +139,28 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 ### [ ] 2.6 Switch to Cloudflare Email Routing (final) 🧑 03-cloudflare-setup §3–4
 - Add the `send_email` binding to `wrangler.jsonc`, then set `EMAIL_PROVIDER: "cloudflare"` and `MAIL_FROM: "quotes@<domain>"`.
 - **Accept:** a test enquiry arrives. The Resend key can then be deleted (`wrangler secret delete RESEND_API_KEY`).
+
+### [ ] 2.7 Admin API (B3)
+- `src/admin.js`, mounted at `/api/admin/*`. Every request first passes `requireAdmin(request, env)`, which verifies the `Cf-Access-Jwt-Assertion` JWT (RS256, using the keys from `https://<ACCESS_TEAM_DOMAIN>/cdn-cgi/access/certs`, cached; `aud` must include `ACCESS_AUD`; `exp` is checked). It allows the dev bypass only when `ADMIN_DEV_BYPASS === 'true'` **and** the hostname is localhost or 127.0.0.1.
+- Routes:
+  - `GET /api/admin/enquiries?status=&q=&limit=50&before=<id>`: newest first, with search on name, email, phone and device, plus counts per status.
+  - `GET /api/admin/enquiries/:id`
+  - `PATCH /api/admin/enquiries/:id` with `{status?, notes?}`: validate the status against the allowed list and keep notes to 2000 characters or fewer; sets `updated_at`.
+  - `DELETE /api/admin/enquiries/:id`: only allowed when the status is `done` or `spam`.
+- All queries use `prepare().bind()`. **Never build SQL by joining strings together.**
+- **Accept:** unit tests for the JWT checks (expired, wrong aud, bad signature, bypass refused on a non-local host). Smoke tests for list, filter, patch, delete-rule and 401 without a token.
+
+### [ ] 2.8 Admin page (B3)
+- `public/admin/index.html`, `admin.css` and `admin.js`, in the same brand style as the site, with `<meta name="robots" content="noindex">`.
+- A list of enquiries with status filter tabs (with counts), search, and "Load more". Each row shows the date (Melbourne time), name, device, quote and a status badge. A ⚠ appears if the email wasn't sent.
+- The detail panel shows every field, `tel:` and `mailto:` buttons, a status dropdown, notes with Save, and Delete (for done or spam only, with an in-page confirmation step).
+- `/admin` is added to `robots.txt` as `Disallow`.
+- **Accept:** works with keyboard only and on a phone screen. Status and notes changes are saved after a reload.
+
+### [ ] 2.9 Go live: remote database + Cloudflare Access (B4) 🧑 03-cloudflare-setup §2, §10
+- The owner runs `npx wrangler login`. Then run `npx wrangler d1 create aminy-db`, put the real `database_id` in `wrangler.jsonc`, and run `npm run db:migrate:remote`.
+- The owner sets up Access (03 §10). Put `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD` in `vars`, then deploy.
+- **Accept:** on the live site, `/admin` asks for an email PIN, and after logging in the owner sees enquiries. `curl` to `/api/admin/enquiries` without a login returns 401 or 403.
 
 ---
 

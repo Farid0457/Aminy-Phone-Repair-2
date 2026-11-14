@@ -73,3 +73,18 @@ The browser sends the form to `POST /api/contact`. The Worker validates it, chec
 - The domain is `aminyrepair.com.au` (to confirm). **Cloudflare Registrar can't sell `.au` domains**, so buy it from an Australian registrar and point its nameservers to Cloudflare (free plan).
 - `.com.au` requires an **ABN** (Australian Business Number).
 - Until the domain is ready, the site runs on the free `aminy-phone-repair.<account>.workers.dev` address.
+
+## D-13 Database: Cloudflare D1 — **Accepted**
+
+- A free D1 (SQLite) database `aminy-db`, bound to the Worker as `env.DB`. Every enquiry is **saved first, then emailed**, so a failed email never loses a lead (`email_sent` records whether the email went out).
+- The schema lives in `migrations/` (numbered SQL files). **Never edit a migration that has already been applied.** Add a new numbered file instead.
+- Local development uses a local copy of the database in `.wrangler/state` (git-ignored). Real data only exists in the remote database.
+- Privacy: only the form fields are stored. No IP addresses or tracking data. Enquiries marked done or spam can be deleted from the admin page (retention policy to be stated in privacy.html).
+
+## D-14 Admin area: `/admin` protected by Cloudflare Access — **Accepted**
+
+- `public/admin/` is a static page that calls `/api/admin/*`.
+- **Login is Cloudflare Access** (free for up to 50 users, one-time PIN by email), so we don't build a password system.
+- Defence in depth: Access blocks `/admin*` and `/api/admin/*` at the edge, **and** the Worker checks the `Cf-Access-Jwt-Assertion` token on every `/api/admin/*` request (team domain and AUD tag from `wrangler.jsonc` vars).
+- Local development only: `ADMIN_DEV_BYPASS=true` in `.dev.vars` skips the token check. It must never be set in production, and the Worker refuses the bypass unless the request is to `localhost`/`127.0.0.1`.
+- Later options (not yet planned): editing prices from the admin page, and repair-status tracking for customers.
