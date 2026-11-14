@@ -6,17 +6,18 @@ Everything here is on Cloudflare's **free plan**. The only cost is the domain. O
 
 Where each section fits:
 
-| § | What | Needed for |
-|---|---|---|
-| 1 | Create the account | everything |
-| 2 | Connect Wrangler on this PC | deploying from the terminal |
-| 3 | Domain → Cloudflare | custom domain, Email Routing |
-| 4 | Email Routing | final email delivery (plan task 2.6), free `info@` inbox |
-| 5 | Turnstile | spam protection (plan task 2.4) |
-| 6 | Resend (interim email) | emails before the domain is ready (plan task 2.5) |
-| 7 | First deploy | going live on workers.dev |
-| 8 | Custom domain + HTTPS | going live on aminyrepair.com.au |
-| 9 | Web Analytics | visitor stats |
+| § | What | Needed for | Status (2026-11-14) |
+|---|---|---|---|
+| 1 | Create the account | everything | ✅ done |
+| 2 | Connect Wrangler on this PC | deploying from the terminal | ✅ done (live D1 `aminy-db` also created and migrated) |
+| 3 | Domain → Cloudflare | custom domain, Email Routing | ⏳ to do: domain not bought yet |
+| 4 | Email Routing | final email delivery (plan task 2.6), free `info@` inbox | ⏳ after §3 |
+| 5 | Turnstile | spam protection (plan task 2.4) | ⏳ to do |
+| 6 | Resend (interim email) | emails before the domain is ready (plan task 2.5) | ⏳ to do |
+| 7 | First deploy | going live on workers.dev | ✅ done with option B (auto-deploy from GitHub) |
+| 8 | Custom domain + HTTPS | going live on aminyrepair.com.au | ⏳ after §3 |
+| 9 | Web Analytics | visitor stats | ⏳ after §3 |
+| 10 | Cloudflare Access | admin login for `/admin` (plan task 2.9) | ⏳ after tasks 2.7–2.8 |
 
 ---
 
@@ -42,7 +43,7 @@ npx wrangler whoami
 
 It should show your account email and Account ID.
 
-Register your free `workers.dev` subdomain: dashboard → **Workers & Pages**. The first time, it asks you to choose a subdomain (e.g. `aminy`). Your site will then be at `https://aminy-phone-repair.aminy.workers.dev`.
+Register your free `workers.dev` subdomain: dashboard → **Workers & Pages**. The first time, it asks you to choose a subdomain (e.g. `aminy`). Your site will then be at `https://aminy-phone-repair-2.aminy.workers.dev`.
 
 ## §3 Domain → Cloudflare
 
@@ -90,7 +91,7 @@ Cloudflare can't sell `.au` domains, so buy the domain elsewhere and point it to
 1. Dashboard → **Turnstile** (in the left sidebar; not tied to a domain) → **Add widget**.
 2. **Widget name:** `Aminy contact form`
 3. **Hostnames**, one per line:
-   - `aminy-phone-repair.<your-subdomain>.workers.dev`
+   - `aminy-phone-repair-2.<your-subdomain>.workers.dev`
    - `aminyrepair.com.au` (you can add this before the domain is active)
    - `www.aminyrepair.com.au`
 4. **Widget mode:** **Managed**. Leave pre-clearance off.
@@ -103,6 +104,8 @@ npx wrangler secret put TURNSTILE_SECRET_KEY
 ```
 
 Paste the secret key when asked and press Enter. It's stored encrypted on Cloudflare.
+
+To test the form on the workers.dev address before the domain is live, also ask Claude Code to add `https://aminy-phone-repair-2.<your-subdomain>.workers.dev` to `ALLOWED_ORIGINS` in `wrangler.jsonc`. Otherwise the API rejects the form with "forbidden_origin".
 
 **Local development** uses Cloudflare's official test keys, so you don't need to do anything. They're already in `.dev.vars.example`:
 - site key `1x00000000000000000000AA` (always passes)
@@ -131,13 +134,13 @@ Choose **A** (simplest) or **B** (automatic deploys from GitHub). You can switch
 ```bash
 npm run deploy
 ```
-Wrangler prints the live URL, e.g. `https://aminy-phone-repair.aminy.workers.dev`. Then set the secrets (§5, §6) if you haven't. Run `npm run deploy` again whenever the site changes.
+Wrangler prints the live URL, e.g. `https://aminy-phone-repair-2.aminy.workers.dev`. Then set the secrets (§5, §6) if you haven't. Run `npm run deploy` again whenever the site changes.
 
 ### Option B: automatic deploy on every `git push` (Workers Builds)
 Requires the GitHub repo from 01 §2.
-1. Dashboard → **Workers & Pages** → **Create** → **Import a repository** → connect GitHub → choose `aminy-phone-repair`.
+1. Dashboard → **Workers & Pages** → **Create** → **Import a repository** → connect GitHub → choose `Aminy-Phone-Repair-2`.
 2. Settings:
-   - **Project name:** `aminy-phone-repair` (must match `name` in `wrangler.jsonc`)
+   - **Project name:** `aminy-phone-repair-2` (must match `name` in `wrangler.jsonc`)
    - **Build command:** *(leave empty)*
    - **Deploy command:** `npx wrangler deploy`
    - **Production branch:** `main`
@@ -150,7 +153,7 @@ Requires the GitHub repo from 01 §2.
 
 Once the domain shows **Active** (§3c):
 
-1. Dashboard → **Workers & Pages** → `aminy-phone-repair` → **Settings → Domains & Routes → Add → Custom domain**:
+1. Dashboard → **Workers & Pages** → `aminy-phone-repair-2` → **Settings → Domains & Routes → Add → Custom domain**:
    - `aminyrepair.com.au` → Add
    - Repeat for `www.aminyrepair.com.au`
    Cloudflare creates the DNS records and the HTTPS certificate automatically (a few minutes).
@@ -163,6 +166,21 @@ Once the domain shows **Active** (§3c):
 1. Dashboard → **Analytics & Logs → Web Analytics → Add a site**.
 2. Choose `aminyrepair.com.au`. Because the domain is on Cloudflare, choose **automatic setup** (Cloudflare adds the script for you, nothing to change in code).
 3. Stats appear within a few hours. The CSP in plan task 5.1 already allows the analytics script.
+
+## §10 Cloudflare Access: login for the admin page
+
+Do this **after** Claude Code has built the admin page (tasks 2.7–2.8). Access is free for up to 50 users, and you log in with a one-time PIN sent to your email, so there's no password to manage (D-14).
+
+1. Dashboard → **Zero Trust**. The first time, choose a **team name** (e.g. `aminy`). This becomes your team domain `aminy.cloudflareaccess.com`. Choose the **Free** plan. It may ask for a payment method, but the free plan isn't charged.
+2. **Settings → Authentication → Login methods:** make sure **One-time PIN** is listed.
+3. **Access → Applications → Add an application → Self-hosted:**
+   - **Application name:** `Aminy admin`
+   - **Application domain:** `aminy-phone-repair-2.<your-subdomain>.workers.dev` with path `admin`, then add a second entry with the same host and path `api/admin`. Once the domain is live, add the same two paths for `aminyrepair.com.au`.
+4. **Policy:** name `Owner only`, action **Allow**, include **Emails** → your email address (and any staff you trust).
+5. Save. Then open the application again and copy its **Application Audience (AUD) tag**.
+6. Give Claude Code the **team domain** and the **AUD tag**. Neither is secret. Then say *"Access is set up, do task 2.9."*
+
+**Check:** open `/admin` in a private window. Cloudflare should ask for your email and send you a PIN.
 
 ---
 

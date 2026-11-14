@@ -8,6 +8,7 @@ flowchart LR
   CF -->|static file exists| A[(public/ static assets)]
   V -->|POST /api/contact| W[Worker src/worker.js]
   W -->|verify token| T[Turnstile siteverify]
+  W -->|save enquiry first| D[(D1 aminy-db, binding DB)]
   W -->|EMAIL_PROVIDER=cloudflare| E[send_email binding → Email Routing]
   W -->|EMAIL_PROVIDER=resend| R[Resend API]
   W -->|EMAIL_PROVIDER=log| L[console, dev only]
@@ -17,33 +18,50 @@ flowchart LR
 
 - Static files are served directly from the edge and never run the Worker.
 - `run_worker_first: ["/api/*"]` makes sure API routes always reach the Worker.
-- Paths that don't match anything serve `public/404.html` (`not_found_handling: "404-page"`).
+- Paths that don't match anything serve `public/404.html` (`not_found_handling: "404-page"`). That file doesn't exist yet (task 3.3), so unknown paths return a plain 404 for now.
 
-## Target file layout
+## What is live (2026-11-14)
+
+| Piece | State |
+|---|---|
+| Worker | `aminy-phone-repair-2` on `https://aminy-phone-repair-2.<subdomain>.workers.dev`, deployed by Workers Builds on every push to GitHub `main` (D-15) |
+| Site | Phase 0–1 version: quote tool with one GST-inclusive price, new models, accessibility work |
+| `/api/contact` | Deployed, but **live submissions fail** until the owner sets the Turnstile secret and an email provider, and the workers.dev URL is added to `ALLOWED_ORIGINS` (03 §5–6) |
+| D1 `aminy-db` | Created, with the `enquiries` table (migration 0001) applied remotely |
+| Domain, Email Routing, Access, Web Analytics | Not set up yet |
+
+## File layout
+
+Items marked *(planned)* don't exist yet. The task that creates each one is in brackets.
 
 ```
 aminy-v2-phone/
 ├── CLAUDE.md                 # instructions for Claude Code
-├── package.json              # wrangler (dev dependency) + scripts
-├── wrangler.jsonc            # Worker + assets config
+├── package.json              # wrangler (dev dependency) + scripts (dev, deploy, test, smoke, db:*)
+├── wrangler.jsonc            # Worker aminy-phone-repair-2 + assets + D1 binding
 ├── .dev.vars.example         # template for local secrets (copy to .dev.vars)
-├── .gitignore                # node_modules, .wrangler, .dev.vars
+├── .gitignore                # node_modules, .wrangler, .dev.vars, .claude/settings.local.json
+├── migrations/
+│   └── 0001_create_enquiries.sql   # enquiries table (D-13)
 ├── src/
 │   ├── worker.js             # router: /api/contact → handler, else assets
-│   ├── contact.js            # parse, validate, honeypot, Turnstile, send
+│   ├── contact.js            # method, origin, size, honeypot, validate, Turnstile, save to D1, email
 │   ├── validate.js           # pure validation functions (unit-tested)
-│   └── email.js              # providers: log | resend | cloudflare
+│   ├── email.js              # providers: log | resend | cloudflare
+│   ├── http.js               # json() helper: JSON + Cache-Control: no-store
+│   └── admin.js              # (planned, 2.7) /api/admin/* with Access JWT check
 ├── test/
 │   └── validate.test.js      # node:test unit tests
 ├── scripts/
 │   ├── smoke-contact.mjs     # POSTs sample payloads to a running server
-│   └── make-images.mjs       # renders og-image.png + icons from SVG
+│   └── make-images.mjs       # (planned, 4.3) renders og-image.png + icons from SVG
 ├── public/                   # ← everything here is publicly served
-│   ├── index.html
-│   ├── 404.html  privacy.html  terms.html  warranty.html
-│   ├── robots.txt  sitemap.xml  _headers  site.webmanifest
-│   ├── assets/               # og-image.png, apple-touch-icon.png, icons
-│   ├── css/                  # existing stylesheets (+ legal.css)
+│   ├── index.html            # still has an inline <script type="module"> until 5.1
+│   ├── admin/                # (planned, 2.8) index.html, admin.css, admin.js
+│   ├── 404.html  privacy.html  terms.html  warranty.html      # (planned, 3.3)
+│   ├── robots.txt  sitemap.xml  _headers  site.webmanifest    # (planned, 4.x / 5.1)
+│   ├── assets/               # (planned, 4.3) og-image.png, apple-touch-icon.png, icons
+│   ├── css/                  # one stylesheet per section, base.css first (+ legal.css in 3.3)
 │   └── js/
 │       ├── animations.js  navbar.js  contact.js  quote.js
 │       └── data/prices.js    # all pricing data (D-05)
@@ -54,13 +72,13 @@ aminy-v2-phone/
 
 ## Configuration
 
-`wrangler.jsonc` (outline; Phase 0 creates the real file):
+`wrangler.jsonc` (summary of the real file):
 
 ```jsonc
 {
-  "name": "aminy-phone-repair",
+  "name": "aminy-phone-repair-2",        // must match the Cloudflare Worker name (D-15)
   "main": "src/worker.js",
-  "compatibility_date": "<date of Phase 0>",
+  "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
@@ -68,14 +86,22 @@ aminy-v2-phone/
     "run_worker_first": ["/api/*"]
   },
   "observability": { "enabled": true },
+  "d1_databases": [{
+    "binding": "DB",                     // env.DB in the Worker
+    "database_name": "aminy-db",
+    "database_id": "80b99810-b5ab-4bb1-8bee-782abb120fd8",
+    "migrations_dir": "migrations"
+  }],
   "vars": {
-    "EMAIL_PROVIDER": "resend",          // log | resend | cloudflare
-    "MAIL_FROM": "onboarding@resend.dev",// later: quotes@aminyrepair.com.au
-    "MAIL_TO": "<owner inbox>",          // owner fills in (manual 03)
+    "EMAIL_PROVIDER": "log",             // now: log. Next: resend (2.5), then cloudflare (2.6)
+    "MAIL_FROM": "",                     // resend: onboarding@resend.dev; later quotes@aminyrepair.com.au
+    "MAIL_TO": "",                       // owner's inbox (02 §2)
     "ALLOWED_ORIGINS": "https://aminyrepair.com.au,https://www.aminyrepair.com.au"
+                                         // add the workers.dev URL to test the form live
   }
-  // Added in Phase 2b once Email Routing is live:
+  // Added in 2.6 once Email Routing is live:
   // "send_email": [{ "name": "SEND_EMAIL", "destination_address": "<owner inbox>" }]
+  // Added in 2.9: ACCESS_TEAM_DOMAIN and ACCESS_AUD in vars
 }
 ```
 
@@ -114,12 +140,16 @@ Request: `Content-Type: application/json`
 | Origin | reject with 403 if the `Origin` header isn't in `ALLOWED_ORIGINS` (localhost is allowed in dev) |
 | Body size | reject with 413 if larger than 10 KB |
 
-Responses: `200 {ok:true}` · `400 {ok:false, error, fields:[...]}` · `403 {ok:false, error:"verification_failed"}` · `405` for anything other than POST · `413` · `502 {ok:false, error:"delivery_failed"}`
+Responses: `200 {ok:true, id}` (id = the saved D1 row, or `null` if only the email went through) · `200 {ok:true}` for the honeypot · `400 {ok:false, error, fields:[...]}` · `403 {ok:false, error:"verification_failed"}` or `"forbidden_origin"` · `405` for anything other than POST · `413` · `502 {ok:false, error:"delivery_failed"}` only when **both** the database save and the email fail.
+
+Order of checks (as built in `src/contact.js`): method → Origin → body size → JSON → honeypot → validate → Turnstile → INSERT into D1 → email → `UPDATE email_sent = 1`.
 
 The email sent to the owner has the subject `New repair enquiry — <device>`, `reply-to` set to the customer's email, and a plain-text body listing every field, the quote, and the time in Australia/Melbourne.
 
 ## Front-end ↔ quote hand-off
 
-1. "Book This Repair" stores the chosen model, issue and total on the contact form (in a hidden field or a JS module variable).
+As built (task 1.5): `quote.js` calls `attachQuote({model, issue, total})` and `clearQuote()`, both exported from `contact.js`. Neither module touches the other's DOM.
+
+1. "Book This Repair" stores the chosen model, issue and total on the contact form (in a JS module variable).
 2. It pre-fills `#device` with `"<model> — <issue>"` and shows a small "Quote attached: $X incl. GST" note, which can be removed.
 3. It scrolls to the form and moves focus to `#firstName`.

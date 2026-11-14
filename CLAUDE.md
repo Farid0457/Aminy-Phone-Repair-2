@@ -16,19 +16,22 @@ A marketing site with an instant-quote tool for **Aminy Phone Repair**, a walk-i
 4. **Prices are owner-approved.** Any new or changed price you propose must be added to the sign-off table in `02-business-info.md` §8.
 5. **Secrets never go in the repo, chat or `public/`.** Use `npx wrangler secret put NAME` for production and `.dev.vars` locally (git-ignored). The Turnstile *site* key is public. The *secret* key is not.
 6. Everything in `public/` is publicly downloadable. Don't put notes, drafts or source files there.
-7. Ask before you deploy (`npm run deploy`), push, or change Cloudflare settings. These are actions other people see.
+7. Ask before you deploy (`npm run deploy`), push, or change Cloudflare settings. These are actions other people see. **A push to `main` is a deploy:** Cloudflare Workers Builds rebuilds the live Worker `aminy-phone-repair-2` from GitHub `Farid0457/Aminy-Phone-Repair-2` on every push.
 
-## Layout (target, after Phase 0)
+## Where things stand
+See the "Current status" block at the top of `docs/implementation-plan.md`. In short: Phases 0–1 are done (1.6 needs the owner's axe and Narrator checks), the contact API is built, and the live D1 database `aminy-db` exists. The admin area (2.7–2.8) is next.
+
+## Layout (Phase 0 done)
 ```
 public/            served as-is: index.html, legal pages, css/, js/, assets/, _headers
 public/js/data/prices.js   all quote pricing data (edit prices here)
-src/               Worker: worker.js (router), contact.js, validate.js, email.js
+src/               Worker: worker.js (router), contact.js, validate.js, email.js, http.js (JSON helper)
+migrations/        D1 schema, numbered SQL files (never edit one that's been applied)
 test/              node:test unit tests
-scripts/           smoke-contact.mjs, make-images.mjs
+scripts/           smoke-contact.mjs (make-images.mjs comes in Phase 4)
 docs/              plans, decisions, owner guides
-wrangler.jsonc     Worker + assets config, vars (EMAIL_PROVIDER, MAIL_FROM, MAIL_TO, ALLOWED_ORIGINS)
+wrangler.jsonc     Worker aminy-phone-repair-2 + assets config, D1 binding DB, vars (EMAIL_PROVIDER, MAIL_FROM, MAIL_TO, ALLOWED_ORIGINS)
 ```
-If `public/` doesn't exist yet, Phase 0 hasn't been done. The site is still at the root (`index.html`, `css/`, `js/`).
 
 ## Commands
 ```bash
@@ -36,8 +39,11 @@ npm install            # once
 npm run dev            # wrangler dev → http://localhost:8787 (site + API, uses .dev.vars)
 npm test               # node --test test/
 npm run smoke          # POST sample payloads to BASE_URL (default localhost:8787)
-npm run deploy         # wrangler deploy (ask first)
+npm run deploy         # wrangler deploy (ask first; pushing to main also deploys)
 npx wrangler tail      # live logs from production
+npm run db:migrate:local   # create/update the local D1 tables (once per machine)
+npm run db:migrate:remote  # apply new migrations to the LIVE database (ask first)
+npm run db:enquiries       # list the latest local enquiries
 ```
 Local dev uses `EMAIL_PROVIDER=log` (emails are printed to the console) and the Turnstile test keys from `.dev.vars.example`.
 

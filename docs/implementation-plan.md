@@ -6,7 +6,14 @@ This is the step-by-step plan for Claude Code. Work through the phases **in orde
 
 **🧑 Manual:** some tasks depend on steps only the owner can do. These are marked with 🧑 and a link to the guide in `docs/manual/`. Claude Code must **stop and ask** instead of inventing values. Any value still marked `TBD` in `docs/manual/02-business-info.md` counts as missing.
 
-Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (waiting on 🧑)
+Status key: `[ ]` todo · `[~]` in progress or partly done · `[x]` done · `[!]` blocked (waiting on 🧑)
+
+### Current status (2026-11-14)
+
+- **Done:** Phase 0; Phase 1 except the manual checks in 1.6; Phase 2 tasks 2.0–2.3. The site auto-deploys to Cloudflare from GitHub `main` (Worker `aminy-phone-repair-2`, D-15).
+- **Partly done:** 1.6 (owner's axe + Narrator checks), 2.4 (form not yet tested by hand in a browser), 2.9 (live D1 created and migrated; Access not set up), 6.1 (live on workers.dev; live smoke test not run).
+- **Next for Claude Code:** 2.7 Admin API → 2.8 Admin page. The owner checks each change in the browser before it's committed.
+- **Waiting on the owner:** see the to-do list in [manual/README.md](manual/README.md#your-to-do-list) (prices, social links, accessibility checks, Turnstile + email setup, domain).
 
 | Phase | Goal | Blocked by 🧑 |
 |---|---|---|
@@ -77,7 +84,7 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 - **Accept:** choose a quote, click Book: `#device` is filled in, the note is visible, focus is on `#firstName`, and the hash is `#contact`. Starting over or removing the note clears the attached quote.
 
 ### [~] 1.6 Quote tool accessibility (4.1–4.4)
-- *Status: code done and keyboard flow checked in headless Chrome at 375px and 1280px (focus moves to each step heading, "Step N of 4" announced, aria-pressed in sync, no console errors). Still to do: the axe DevTools scan and an NVDA or Narrator pass.*
+- *Status: **partly done.** Code done and keyboard flow checked in headless Chrome at 375px, 768px and 1280px (focus moves to each step heading, "Step N of 4" announced, aria-pressed in sync, no console errors). Still to do (🧑 owner, deferred): the axe DevTools scan and a Narrator or NVDA pass. See manual/README to-do (c).*
 - When the step changes, focus moves to the new step's label. Make the labels headings (`<h3 class="iq-step-label" tabindex="-1">`).
 - Add `type="button"` to every quote button, and `aria-pressed` to device, series, model and issue buttons, kept in step with `.selected`.
 - Add a visually hidden live region (`aria-live="polite"`) that announces "Step N of 4: <label>".
@@ -103,12 +110,14 @@ Review checkpoints with the owner: **B1** = 2.0 · **B2** = 2.1–2.4 · **B3** 
 - `migrations/0001_create_enquiries.sql` (the `enquiries` table, with a status check and indexes), the `d1_databases` binding `DB` in `wrangler.jsonc` (placeholder id until 2.9), and the npm scripts `db:migrate:local`, `db:migrate:remote` and `db:enquiries`.
 - **Accept:** `npm run db:migrate:local` applies the migration, `npm run db:enquiries` returns `[]`, and an invalid status is rejected by the CHECK constraint.
 
-### [ ] 2.1 Validation module + tests
+### [x] 2.1 Validation module + tests
+- *Done: `npm test` passes (13 tests).*
 - `src/validate.js`: a pure `validateContact(body)` that returns `{ok, data, fields}` and follows **every** rule in the architecture API contract.
 - `test/validate.test.js` uses `node:test` and covers: valid minimal input, valid full input, each required field missing, a bad email, AU phone variants (`0412 345 678`, `+61412345678`, `(03) 9123 4567`), fields that are too long, a malformed quote, and the honeypot filled in.
 - **Accept:** `npm test` passes.
 
-### [ ] 2.2 Email providers
+### [x] 2.2 Email providers
+- *Done: in `log` mode a submission prints the full email in the `wrangler dev` console (checked 2026-11-14).*
 - `src/email.js` exports `sendEnquiry(env, data)` and switches on `env.EMAIL_PROVIDER`:
   - `log`: `console.log` the formatted email.
   - `resend`: `fetch('https://api.resend.com/emails', …)` with `Authorization: Bearer ${env.RESEND_API_KEY}`, `from: env.MAIL_FROM`, `to: env.MAIL_TO`, `reply_to` set to the customer, and a text body.
@@ -116,7 +125,8 @@ Review checkpoints with the owner: **B1** = 2.0 · **B2** = 2.1–2.4 · **B3** 
 - Format the body as plain text: every field, the quote, and the timestamp in `Australia/Melbourne`. Escape nothing (it's plain text), but strip CR/LF characters from header values to prevent header injection.
 - **Accept:** with `log`, a submission prints a well-formed email in the `wrangler dev` console.
 
-### [ ] 2.3 `/api/contact` handler
+### [x] 2.3 `/api/contact` handler
+- *Done: `npm run smoke` passes all 8 cases (200, 400, 200 honeypot, 400, 403, 403, 413, 405), and the enquiry is saved to local D1 (checked 2026-11-14).*
 - `src/contact.js`. Order of checks: method → Origin → body size → JSON parse → honeypot → validate → Turnstile siteverify (`POST https://challenges.cloudflare.com/turnstile/v0/siteverify` with `secret`, `response` and `remoteip` from `CF-Connecting-IP`) → **INSERT into D1** → send email → `UPDATE email_sent = 1`.
 - If the email fails but the database insert worked, still return `200 {ok:true}`. The enquiry is safe and shows in the admin page with "email not sent". Return 502 only if the database insert fails **and** the email fails.
 - Return JSON as described in the contract, with `Cache-Control: no-store`.
@@ -124,7 +134,8 @@ Review checkpoints with the owner: **B1** = 2.0 · **B2** = 2.1–2.4 · **B3** 
 - `scripts/smoke-contact.mjs` POSTs a valid payload, an invalid one, a honeypot one and a wrong-method request to `process.env.BASE_URL ?? 'http://localhost:8787'`, then prints the results.
 - **Accept:** `npm run smoke` gives 200, 400, 200 (and no email logged for the honeypot) and 405.
 
-### [ ] 2.4 Front-end form
+### [~] 2.4 Front-end form
+- *Partly done: code built (Turnstile test key, honeypot, fetch, fallback message). Still to do: submit it by hand in a browser (dev server and mobile width), and check the fallback with the server stopped.*
 - Add a Turnstile widget to the form: `<div class="cf-turnstile" data-sitekey="…">` and the script `https://challenges.cloudflare.com/turnstile/v0/api.js` with `async defer`. Use the **test site key** until 🧑 03-cloudflare-setup §5 is done, and keep the key in one obvious place.
 - Add the honeypot: `<div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>`, hidden off-screen with CSS (not `display:none`).
 - Rewrite `public/js/contact.js` to keep the existing client-side validation, then `fetch('/api/contact')` with JSON. While sending, disable the button and change its text to "Sending…".
@@ -159,7 +170,8 @@ Review checkpoints with the owner: **B1** = 2.0 · **B2** = 2.1–2.4 · **B3** 
 - `/admin` is added to `robots.txt` as `Disallow`.
 - **Accept:** works with keyboard only and on a phone screen. Status and notes changes are saved after a reload.
 
-### [ ] 2.9 Go live: remote database + Cloudflare Access (B4) 🧑 03-cloudflare-setup §2, §10
+### [~] 2.9 Go live: remote database + Cloudflare Access (B4) 🧑 03-cloudflare-setup §2, §10
+- *Partly done (2026-11-14): Wrangler logged in, `aminy-db` created, real `database_id` in `wrangler.jsonc`, `npm run db:migrate:remote` applied. Still to do: Access (03 §10) and the vars, after 2.7–2.8.*
 - The owner runs `npx wrangler login`. Then run `npx wrangler d1 create aminy-db`, put the real `database_id` in `wrangler.jsonc`, and run `npm run db:migrate:remote`.
 - The owner sets up Access (03 §10). Put `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD` in `vars`, then deploy.
 - **Accept:** on the live site, `/admin` asks for an email PIN, and after logging in the owner sees enquiries. `curl` to `/api/admin/enquiries` without a login returns 401 or 403.
@@ -242,7 +254,8 @@ Before starting, read `docs/manual/02-business-info.md`. **Stop and list** any `
 
 ## Phase 6: Deploy and launch 🧑
 
-### [ ] 6.1 First deploy to workers.dev 🧑 03-cloudflare-setup §1–2, §7
+### [~] 6.1 First deploy to workers.dev 🧑 03-cloudflare-setup §1–2, §7
+- *Partly done: Workers Builds deploys every push to `main` (option B, D-15). Still to do: the live smoke test, which needs the Turnstile secret, an email provider and the workers.dev URL in `ALLOWED_ORIGINS`.*
 - `npm run deploy`. Run the smoke test against the deployed URL with `BASE_URL=https://… npm run smoke`, using a real Turnstile token where possible, or test by hand in the browser.
 
 ### [ ] 6.2 Connect the domain 🧑 03-cloudflare-setup §3, §8–9

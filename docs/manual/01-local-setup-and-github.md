@@ -2,6 +2,8 @@
 
 Already installed on this PC (checked 2026-11-14): **Node.js v24**, **npm 11**, **Git 2.46**. Wrangler doesn't need installing globally; the project runs it through `npx`.
 
+> **Status (2026-11-14):** §1 and §2 are done. The repo is `https://github.com/Farid0457/Aminy-Phone-Repair-2` and `main` is pushed. §3 is optional and not set up. Wrangler is logged in (03 §2).
+
 ## 1. Git identity (one time)
 
 In a terminal:
@@ -34,4 +36,4 @@ Not required. If you want Claude Code to create the repo and push for you: insta
 
 - **axe DevTools** extension (Chrome/Edge): accessibility checks.
 - Lighthouse is built into Chrome DevTools (F12 → Lighthouse).
-- **NVDA** screen reader (https://www.nvaccess.org): free, for the accessibility check in Phase 1.6. Windows Narrator also works (Ctrl+Win+Enter).
+- **NVDA** screen reader (https://www.nvaccess.org): free, for the accessibility check in Phase 1.6. Windows Narrator also works (Ctrl+Win+Enter). This check is still open: see the to-do list in [README](README.md#your-to-do-list), item (c).

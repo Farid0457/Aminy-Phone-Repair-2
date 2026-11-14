@@ -82,6 +82,8 @@ Claude Code reads this file to replace the placeholders on the site. **It will n
 
 Claude Code adds a row here for every price it **proposes** (new models, fixed fallbacks). Check each one, then write **approved** or a new price in the last column. The site keeps using the proposed price until you answer.
 
+**Status (2026-11-14):** 43 rows (70 prices in all) are waiting for review, and they're already live on the site as proposals. This is item (a) on the [to-do list](README.md#your-to-do-list).
+
 | Category | Model | Repair | Proposed AUD (incl. GST) | Source / reasoning | Owner decision |
 |---|---|---|---|---|---|
 | MacBook | Pro 14" (M6) | Screen · Battery | $620 · $249 | New model (on sale 6 Nov 2026, [Apple AU newsroom](https://www.apple.com/au/newsroom/2026/10/apple-introduces-the-new-14-inch-macbook-pro-with-m6/)). One step above the 14" M5. | TBD |

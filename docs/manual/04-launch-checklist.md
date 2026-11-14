@@ -23,6 +23,7 @@
 ### Quality
 - [ ] 🤖 Lighthouse (mobile) ≥ 90 in all four categories for `/`.
 - [ ] 🤖 axe: no serious or critical issues on any page.
+- [ ] 🧑 Quote tool with Narrator or NVDA: each step is announced and selected options say "pressed" (task 1.6, to-do (c) in the [manual README](README.md#your-to-do-list)).
 - [ ] 🤖 No console errors or CSP violations on any page.
 - [ ] 🧑 Test on a real iPhone (Safari) and a real Android phone.
 - [ ] 🤖 https://validator.schema.org: JSON-LD has no errors.
@@ -37,7 +38,7 @@
 - [ ] 🧑 Domain auto-renew is **on** at the registrar.
 
 ## Launch day
-- [ ] 🧑 Final deploy (`npm run deploy`, or push to `main` if using option B).
+- [ ] 🧑 Final deploy. Option B is set up, so pushing to `main` deploys (D-15). `npm run deploy` also works.
 - [ ] 🧑 Send one more real test enquiry.
 - [ ] 🧑 Share the link and announce on your social pages.
 
@@ -57,7 +58,7 @@
 
 | Task | How |
 |---|---|
-| Change a price or add a model | Ask Claude Code: *"Update the price of X to $Y"*. It edits `public/js/data/prices.js`, then deploy. |
+| Change a price or add a model | Ask Claude Code: *"Update the price of X to $Y"*. It edits `public/js/data/prices.js`, then pushes to `main` (which deploys). |
 | Change hours or phone | Update `02-business-info.md`, then ask Claude Code to apply it. |
 | New phone models each September (iPhone) and February (Galaxy) | Ask Claude Code: *"Refresh model lists (task 1.3)"*. |
 | Renew the domain | Yearly at the registrar (auto-renew). |
