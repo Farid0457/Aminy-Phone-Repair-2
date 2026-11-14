@@ -3,6 +3,7 @@
    ═══════════════════════════════════════════ */
 
 import { QUOTE_DATA, getPrice } from './data/prices.js';
+import { attachQuote, clearQuote } from './contact.js';
 // ─────────────────────────────────────────
 // SVG ICON LIBRARY
 // ─────────────────────────────────────────
@@ -67,6 +68,7 @@ export function buildQuote(){
 
   let selectedCategory=null, selectedModel=null, selectedIssue=null;
   let seriesStep=null;
+  let lastQuote=null;   // { model, issue, total } of the result currently shown
 
   const allPanels=[step1,stepIphone,stepSamsung,stepSamsungTab,stepGoogle,stepOppo,stepMoto,stepIpad,step2,step3,result];
   function show(panel){ allPanels.forEach(p=>p&&p.classList.add('iq-hidden')); panel.classList.remove('iq-hidden'); }
@@ -131,9 +133,17 @@ export function buildQuote(){
   document.getElementById('iq-back-result-issue').addEventListener('click',()=>{ show(step3); setDots(3); });
   document.getElementById('iq-back-result-model').addEventListener('click',()=>{ show(step2); setDots(2); });
   document.getElementById('iq-reset').addEventListener('click',()=>{
-    selectedCategory=selectedModel=selectedIssue=seriesStep=null;
+    selectedCategory=selectedModel=selectedIssue=seriesStep=null; lastQuote=null;
     document.querySelectorAll('.iq-device-btn').forEach(b=>b.classList.remove('selected'));
+    clearQuote();
     show(step1); setDots(1);
+  });
+
+  // "Book This Repair" → hand the quote to the contact form
+  document.getElementById('iq-book').addEventListener('click',e=>{
+    if(!lastQuote) return;   // no quote yet: plain #contact link
+    e.preventDefault();
+    attachQuote(lastQuote);
   });
 
   // Buttons are built with textContent (not HTML strings) so model names
@@ -177,6 +187,7 @@ export function buildQuote(){
     document.getElementById('iq-price-labour').textContent=`$${labour}`;
     document.getElementById('iq-price-gst').textContent=`$${gst}`;
     document.getElementById('iq-time').textContent=`⏱ ${selectedIssue.time} repair`;
+    lastQuote={ model:selectedModel, issue:selectedIssue.name, total };
     show(result); setDots(4);
     animateCount(document.getElementById('iq-total'),total);
     result.scrollIntoView({behavior:'smooth',block:'center'});

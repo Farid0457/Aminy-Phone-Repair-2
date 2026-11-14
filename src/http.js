@@ -1,0 +1,11 @@
+/** JSON response helper — every /api/* response is JSON and never cached. */
+export function json(body, status = 200, headers = {}) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-store',
+      ...headers,
+    },
+  });
+}

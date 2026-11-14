@@ -109,8 +109,50 @@
   line-height: 1.5;
 }
 .form-status:empty { display: none; }
-.form-status.error { color: #DC2626; }
-.form-status.info  { color: var(--text); }
+.form-status.error   { color: #DC2626; }
+.form-status.info    { color: var(--text); }
+.form-status.success { color: #15803D; }
+.form-status a { color: inherit; text-decoration: underline; }
+
+/* Quote handed over from the instant-quote tool ("Book This Repair") */
+.quote-attached {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: -6px;
+  padding: 10px 12px 10px 14px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.quote-attached strong { color: var(--accent-text); }
+.quote-attached-remove {
+  flex: none;
+  width: 28px; height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.quote-attached-remove:hover { background: var(--accent-line); }
+
+/* Honeypot — visually hidden but still in the DOM for bots (not display:none) */
+.hp {
+  position: absolute !important;
+  left: -10000px;
+  width: 1px; height: 1px;
+  overflow: hidden;
+}
+
+.cf-turnstile { min-height: 65px; }
+
+.contact-form button[type="submit"]:disabled { opacity: 0.65; cursor: progress; }
 
 .form-note {
   font-size: 0.78rem;

@@ -30,6 +30,9 @@
   <link rel="stylesheet" href="css/quote.css" />
   <link rel="stylesheet" href="css/contact.css" />
   <link rel="stylesheet" href="css/footer.css" />
+
+  <!-- Cloudflare Turnstile (spam protection for the contact form) -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -558,7 +561,7 @@
             <div class="iq-result-footer">
               <p class="iq-disclaimer">Prices are estimates. Final quote confirmed in-store after free diagnosis.</p>
               <div class="iq-result-actions">
-                <a href="#contact" class="btn-primary">Book This Repair</a>
+                <a href="#contact" class="btn-primary" id="iq-book">Book This Repair</a>
                 <button class="iq-reset-btn" id="iq-back-result-issue">&#8592; Change Issue</button>
                 <button class="iq-reset-btn" id="iq-back-result-model">&#8592; Change Model</button>
                 <button class="iq-reset-btn" id="iq-reset">Start Over</button>
@@ -625,15 +628,26 @@
         </div>
         <div class="form-group">
           <label for="device">Device &amp; Issue</label>
-          <input type="text" id="device" placeholder="e.g. iPhone 14 — cracked screen" required />
+          <input type="text" id="device" placeholder="e.g. iPhone 14 — cracked screen" maxlength="200" required />
+        </div>
+        <div class="quote-attached" id="quoteAttached" hidden>
+          <span>Quote attached: <strong id="quoteAttachedText"></strong></span>
+          <button type="button" class="quote-attached-remove" id="quoteAttachedRemove" aria-label="Remove attached quote">&times;</button>
         </div>
         <div class="form-group">
           <label for="message">Message (optional)</label>
-          <textarea id="message" rows="3" placeholder="Any other details…"></textarea>
+          <textarea id="message" rows="3" placeholder="Any other details…" maxlength="2000"></textarea>
         </div>
-        <button type="submit" class="btn-primary btn-full">Send Enquiry →</button>
+        <!-- Honeypot: hidden from people, bots fill it in (D-03) -->
+        <div class="hp" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+        <!-- Turnstile spam check. Site key: TEST key (always passes) until docs/manual/03-cloudflare-setup.md §5 -->
+        <div class="cf-turnstile" id="turnstile" data-sitekey="1x00000000000000000000AA" data-size="flexible" data-theme="light"></div>
+        <button type="submit" class="btn-primary btn-full" id="contactSubmit">Send Enquiry →</button>
         <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
-        <p class="form-note">Sending opens your email app with your enquiry filled in. We reply within 1 hour during business hours.</p>
+        <p class="form-note">We reply within 1 hour during business hours.</p>
       </form>
     </div>
   </section>
