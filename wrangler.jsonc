@@ -1,7 +1,7 @@
 {
   // Cloudflare Worker + static assets. See docs/architecture.md and docs/decisions.md (D-01, D-02).
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "aminy-phone-repair",
+  "name": "aminy-phone-repair-2",
   "main": "src/worker.js",
   "compatibility_date": "2026-11-01",
 
