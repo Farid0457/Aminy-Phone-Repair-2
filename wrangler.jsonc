@@ -21,7 +21,7 @@
     {
       "binding": "DB",
       "database_name": "aminy-db",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "80b99810-b5ab-4bb1-8bee-782abb120fd8",
       "migrations_dir": "migrations"
     }
   ],
