@@ -1,0 +1,137 @@
+/* ═══════════════════════════════════════════
+   SERVICES — exploded iPhone 17 Pro Max + service list
+   ═══════════════════════════════════════════ */
+
+.services { background: var(--paper); }
+
+.services-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 64px;
+  align-items: center;
+}
+
+/* ── Exploded phone ── */
+.xphone { margin: 0; }
+.xphone-svg { width: 100%; height: auto; overflow: visible; }
+
+.xphone .xlines line {
+  stroke: var(--text-3);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  opacity: 0.55;
+}
+.xp-label line { stroke: var(--line); stroke-width: 1; }
+.xp-label circle { fill: var(--accent); }
+.xp-label text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  fill: var(--text-2);
+}
+
+.xphone .xl {
+  transition: transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: calc(var(--i) * 70ms);
+}
+.xphone.is-assembled .xl { transform: translateY(calc(var(--dz) * -0.8px)); }
+.xphone .xlines,
+.xphone .xp-label { transition: opacity 0.6s ease 0.8s; }
+.xphone.is-assembled .xlines,
+.xphone.is-assembled .xp-label { opacity: 0; transition-delay: 0s; }
+
+.xphone figcaption {
+  margin-top: 12px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ── Content ── */
+.services-content .section-eyebrow { margin-bottom: 14px; }
+.services-content .section-title { margin-bottom: 18px; }
+.title-rule {
+  display: block;
+  width: 64px; height: 3px;
+  border-radius: 3px;
+  background: var(--accent);
+  margin-bottom: 22px;
+}
+.services-desc {
+  font-size: 1.02rem;
+  color: var(--text-2);
+  line-height: 1.7;
+  max-width: 460px;
+  margin-bottom: 34px;
+}
+
+.services-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 28px;
+  margin-bottom: 40px;
+}
+.svc-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.svc-icon {
+  width: 46px; height: 46px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--accent-soft);
+  transition: background var(--transition);
+}
+.service-svg { width: 26px; height: 26px; color: var(--accent); transition: color var(--transition); }
+.svc-item:hover .svc-icon { background: var(--accent); }
+.svc-item:hover .service-svg { color: #FFFFFF; }
+.svc-name {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.services-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+.services-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-3);
+}
+.services-note svg { width: 16px; height: 16px; color: var(--accent); }
+
+/* Responsive */
+@media (max-width: 1000px) {
+  .services-layout { grid-template-columns: 1fr; gap: 48px; }
+  .xphone { max-width: 560px; margin: 0 auto; width: 100%; }
+}
+@media (max-width: 480px) {
+  .services-list { gap: 18px 14px; }
+  .svc-icon { width: 40px; height: 40px; border-radius: 11px; }
+  .service-svg { width: 22px; height: 22px; }
+  .svc-name { font-size: 0.9rem; }
+  .services-cta .btn-primary { width: 100%; }
+}
+/* Small screens: labels would be unreadably small, so drop them and let the phone fill the width */
+@media (max-width: 560px) {
+  .xphone { overflow: hidden; }
+  .xphone-svg { width: 152%; }
+  .xp-label { display: none; }
+  .xphone figcaption { margin-top: 4px; }
+}

@@ -1,0 +1,400 @@
+/* ═══════════════════════════════════════════
+   INSTANT QUOTE CALCULATOR — dark ink band,
+   large dark tiles, white "repair ticket" result
+   ═══════════════════════════════════════════ */
+
+.instant-quote {
+  background: var(--ink);
+  color: var(--on-dark);
+  position: relative;
+  overflow: hidden;
+}
+/* soft glow behind the panel */
+.instant-quote::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(45% 40% at 50% 30%, rgba(255,138,76,0.12), transparent 70%),
+    radial-gradient(40% 50% at 100% 100%, rgba(96,116,206,0.16), transparent 70%);
+}
+.instant-quote .section-container { position: relative; }
+.instant-quote .section-title { color: var(--on-dark); }
+.instant-quote .section-title .accent,
+.instant-quote .section-eyebrow { color: var(--accent-on-dark); }
+.instant-quote .section-desc { color: var(--on-dark-2); }
+
+.iq-wrapper {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 48px;
+  background: var(--ink-2);
+  border: 1px solid var(--line-dark);
+  border-radius: 28px;
+  box-shadow: 0 40px 80px -40px rgba(0,0,0,0.7);
+}
+
+/* Step transitions */
+.iq-step  { animation: iqFadeIn 0.3s ease; }
+.iq-hidden { display: none !important; }
+@keyframes iqFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.iq-step-label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--on-dark);
+  margin-bottom: 32px;
+  letter-spacing: -0.025em;
+}
+.iq-step-num {
+  display: grid;
+  place-items: center;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-accent);
+}
+
+/* Shared dark tile */
+.iq-device-btn,
+.iq-samsung-btn,
+.iq-model-btn,
+.iq-issue-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid var(--line-dark);
+  color: var(--on-dark);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.iq-device-btn:hover,  .iq-device-btn.selected,
+.iq-samsung-btn:hover,
+.iq-model-btn:hover,   .iq-model-btn.selected,
+.iq-issue-btn:hover,   .iq-issue-btn.selected {
+  border-color: var(--accent-on-dark);
+  background: rgba(255,138,76,0.10);
+}
+.iq-device-btn.selected,
+.iq-model-btn.selected,
+.iq-issue-btn.selected { box-shadow: 0 0 0 2px var(--accent-on-dark); }
+
+/* Shared icon tile */
+.iq-device-icon,
+.iq-samsung-icon,
+.iq-issue-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(255,138,76,0.12);
+  color: var(--accent-on-dark);
+  transition: var(--transition);
+}
+.iq-device-btn:hover .iq-device-icon,
+.iq-device-btn.selected .iq-device-icon,
+.iq-samsung-btn:hover .iq-samsung-icon,
+.iq-issue-btn:hover .iq-issue-icon,
+.iq-issue-btn.selected .iq-issue-icon {
+  background: var(--accent);
+  color: #FFFFFF;
+}
+
+/* ── Device grid ── */
+.iq-device-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+.iq-device-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 32px 12px 26px;
+  border-radius: 20px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  min-height: 196px;
+}
+.iq-device-btn:hover { transform: translateY(-4px); }
+.iq-device-icon { width: 84px; height: 84px; border-radius: 20px; }
+.iq-device-icon svg { width: 50px; height: 50px; }
+
+/* ── Series grid ── */
+.iq-samsung-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.iq-samsung-grid.iq-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.iq-samsung-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 34px 20px 28px;
+  border-radius: 20px;
+  min-height: 220px;
+  text-align: center;
+}
+.iq-samsung-btn:hover { transform: translateY(-4px); }
+.iq-samsung-icon { width: 84px; height: 84px; border-radius: 20px; }
+.iq-samsung-icon svg { width: 50px; height: 50px; }
+.iq-samsung-label {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--on-dark);
+  letter-spacing: -0.01em;
+}
+.iq-samsung-sub {
+  font-size: 0.86rem;
+  color: var(--on-dark-2);
+  font-weight: 500;
+}
+
+/* ── Model grid ── */
+.iq-model-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  max-height: 560px;
+  overflow-y: auto;
+  padding: 3px;
+  scrollbar-color: var(--ink-3) transparent;
+}
+.iq-model-btn {
+  padding: 18px 14px;
+  border-radius: 14px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--on-dark);
+}
+
+/* ── Issue grid ── */
+.iq-issue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.iq-issue-btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 18px;
+  text-align: left;
+}
+.iq-issue-icon { width: 56px; height: 56px; border-radius: 16px; }
+.iq-issue-icon svg { width: 30px; height: 30px; }
+.iq-issue-info { display: flex; flex-direction: column; gap: 2px; }
+.iq-issue-name { font-weight: 700; font-size: 1.05rem; color: var(--on-dark); }
+
+/* Back button — ghost on dark */
+.iq-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  padding: 13px 22px;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.22);
+  border-radius: 12px;
+  color: var(--on-dark);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.iq-back-btn:hover { border-color: var(--on-dark); background: rgba(255,255,255,0.06); }
+
+/* ── Result — white repair ticket on the dark panel ── */
+.iq-result { animation: iqFadeIn 0.4s ease; max-width: 760px; margin: 0 auto; }
+
+.iq-result-card {
+  background: var(--paper);
+  color: var(--text);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -30px rgba(0,0,0,0.8);
+}
+.iq-result-header {
+  padding: 34px 40px 28px;
+  background: var(--accent);
+  color: #FFFFFF;
+}
+.iq-result-device {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+.iq-result-issue {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.iq-result-body {
+  padding: 22px 40px 28px;
+  display: flex;
+  flex-direction: column;
+}
+.iq-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 1.02rem;
+  color: var(--text-2);
+}
+.iq-price-row span:last-child {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.iq-price-divider { height: 0; margin: 4px 0; }
+.iq-price-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 20px 0 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.iq-total-amount {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  font-weight: 700;
+  color: var(--accent-text);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.iq-time-row { display: flex; padding: 12px 0 0; }
+.iq-time-badge {
+  display: inline-block;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+
+.iq-result-footer {
+  padding: 24px 40px 32px;
+  border-top: 1px solid var(--line);
+  background: var(--mist);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.iq-disclaimer { font-size: 0.86rem; color: var(--text-3); line-height: 1.5; }
+.iq-result-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.iq-result-actions .btn-primary { padding: 15px 28px; font-size: 1rem; }
+.iq-reset-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0;
+  color: var(--text-2);
+}
+#iq-back-result-issue,
+#iq-back-result-model {
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 13px 16px;
+  background: var(--paper);
+}
+#iq-back-result-issue:hover,
+#iq-back-result-model:hover { border-color: var(--text-2); color: var(--text); }
+#iq-reset { margin-left: 6px; text-decoration: underline; text-underline-offset: 3px; }
+#iq-reset:hover { color: var(--text); }
+
+/* Progress dots */
+.iq-progress { display: flex; justify-content: center; gap: 10px; margin-top: 40px; }
+.iq-dot {
+  width: 10px; height: 10px;
+  border-radius: 5px;
+  background: var(--ink-3);
+  transition: var(--transition);
+}
+.iq-dot.active { background: var(--accent-on-dark); width: 30px; }
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .iq-wrapper { padding: 36px; }
+  .iq-device-btn { min-height: 176px; }
+  .iq-device-icon, .iq-samsung-icon { width: 72px; height: 72px; }
+  .iq-device-icon svg, .iq-samsung-icon svg { width: 42px; height: 42px; }
+  .iq-model-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .iq-issue-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .iq-device-grid { gap: 12px; }
+  .iq-device-btn { min-height: 156px; font-size: 0.95rem; padding: 24px 8px 20px; gap: 14px; }
+  .iq-device-icon { width: 60px; height: 60px; border-radius: 16px; }
+  .iq-device-icon svg { width: 36px; height: 36px; }
+}
+@media (max-width: 720px) {
+  .iq-wrapper { padding: 24px 16px; border-radius: 22px; }
+  .iq-step-label { font-size: 1.25rem; margin-bottom: 22px; gap: 12px; }
+  .iq-step-num { width: 38px; height: 38px; font-size: 0.8rem; }
+  .iq-device-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .iq-device-btn { min-height: 150px; }
+  .iq-device-icon { width: 64px; height: 64px; }
+  .iq-device-icon svg { width: 38px; height: 38px; }
+  .iq-samsung-grid,
+  .iq-samsung-grid.iq-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .iq-samsung-btn { min-height: 176px; padding: 24px 10px 20px; gap: 10px; }
+  .iq-samsung-icon { width: 60px; height: 60px; border-radius: 16px; }
+  .iq-samsung-icon svg { width: 36px; height: 36px; }
+  .iq-samsung-label { font-size: 0.98rem; }
+  .iq-samsung-sub { font-size: 0.76rem; }
+  .iq-model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 460px; gap: 8px; }
+  .iq-model-btn { padding: 16px 10px; font-size: 0.9rem; }
+  .iq-issue-grid { grid-template-columns: 1fr; gap: 10px; }
+  .iq-issue-btn { padding: 16px; }
+  .iq-issue-icon { width: 50px; height: 50px; }
+  .iq-result-header,
+  .iq-result-body,
+  .iq-result-footer { padding-left: 22px; padding-right: 22px; }
+  .iq-result-device { font-size: 1.6rem; }
+  .iq-total-amount { font-size: 2.5rem; }
+}

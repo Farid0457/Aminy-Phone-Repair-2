@@ -1,0 +1,35 @@
+/* ═══════════════════════════════════════════
+   MARQUEE STRIP
+   ═══════════════════════════════════════════ */
+
+.marquee-strip {
+  background: var(--ink-2);
+  border-top: 1px solid var(--line-dark);
+  padding: 18px 0;
+  overflow: hidden;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 34s linear infinite;
+  white-space: nowrap;
+}
+.marquee-track span {
+  margin-right: 28px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--on-dark-2);
+}
+.marquee-track .dot {
+  color: var(--accent-on-dark);
+  font-size: 0.5rem;
+  align-self: center;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
