@@ -54,7 +54,7 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 - `quote.js` imports from it. Remove the duplicated data.
 - **Accept:** the quote tool works the same for every category. Spot-check iPhone 15 Pro screen, Galaxy S24 battery, MacBook keyboard, Watch crown and Moto G84 screen.
 
-### [ ] 1.2 Fix the MacBook price fallback (remaining-work 3.1, 3.2)
+### [x] 1.2 Fix the MacBook price fallback (remaining-work 3.1, 3.2)
 - Add explicit prices for **every** model so none depends on `_default` for screen and battery. Add M1, M5 and the main Intel models (2016–2020 Pro and Air).
 - New prices are **proposals**. Add each one to the "Prices pending sign-off" table in `docs/manual/02-business-info.md`.
 - **Accept:** no MacBook model has a screen price lower than an older or smaller sibling. The table is updated.

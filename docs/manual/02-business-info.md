@@ -84,7 +84,33 @@ Claude Code adds a row here for every price it **proposes** (new models, fixed f
 
 | Category | Model | Repair | Proposed AUD (incl. GST) | Source / reasoning | Owner decision |
 |---|---|---|---|---|---|
-| | | | | | |
+| MacBook | Pro 14" (M6) | Screen · Battery | $620 · $249 | New model (on sale 6 Nov 2026, [Apple AU newsroom](https://www.apple.com/au/newsroom/2026/10/apple-introduces-the-new-14-inch-macbook-pro-with-m6/)). One step above the 14" M5. | TBD |
+| MacBook | Pro 16" (M5 Pro/Max) | Screen · Battery | $700 · $259 | New model (Mar 2026). One step above the 16" M4 ($680 · $249). | TBD |
+| MacBook | Pro 14" (M5 Pro/Max) | Screen · Battery | $600 · $239 | New model (Mar 2026). One step above the 14" M4 ($580 · $229). | TBD |
+| MacBook | Pro 14" (M5) | Screen · Battery | $600 · $239 | New model (Oct 2025). Same chassis as the 14" M5 Pro/Max. | TBD |
+| MacBook | Air 15" (M5) | Screen · Battery | $520 · $219 | New model (Mar 2026). One step above the Air 15" M4. | TBD |
+| MacBook | Air 13" (M5) | Screen · Battery | $460 · $199 | New model (Mar 2026). One step above the Air 13" M4. | TBD |
+| MacBook | MacBook Neo | Screen · Battery | $349 · $179 | New budget model (2026). Priced below the Airs, since it's the entry model. Please check part costs. | TBD |
+| MacBook | Air 15" (M4) | Screen · Battery | $500 · $209 | Model was missing (Mar 2025). Between the Air 15" M3 and M5. | TBD |
+| MacBook | Air 13" (M4) | Screen · Battery | $440 · $189 | Model was missing (Mar 2025). Between the Air 13" M3 and M5. | TBD |
+| MacBook | Pro 16" (M3) | Battery | $239 | Was $179 via the fallback. Now sits between the 16" M2 and M4. Screen ($650) unchanged. | TBD |
+| MacBook | Pro 14" (M3) | Battery | $219 | Was $179 via the fallback. Now sits between the 14" M2 and M4. Screen ($550) unchanged. | TBD |
+| MacBook | Air 15" (M3) | Battery | $199 | Was $179 via the fallback. Larger than the Air 13". Screen ($480) unchanged. | TBD |
+| MacBook | Pro 16" (M2) | Screen · Battery | $620 · $229 | Model was missing (2023). One step below the 16" M3. | TBD |
+| MacBook | Pro 14" (M2) | Screen · Battery | $520 · $209 | Model was missing (2023). One step below the 14" M3. | TBD |
+| MacBook | Pro 13" (M2) | Screen · Battery | $400 · $189 | Model was missing (2022). Older 13" design. | TBD |
+| MacBook | Air 15" (M2) | Screen · Battery | $460 · $189 | **Bug fix:** was $299 · $179 via the fallback, cheaper than the M3 (remaining-work 3.1). | TBD |
+| MacBook | Air 13" (M2) | Screen | $399 | **Bug fix:** was $299 via the fallback. Battery ($179) unchanged. | TBD |
+| MacBook | Pro 16" (M1) | Screen · Battery | $590 · $219 | Model was missing (2021). One step below the 16" M2. | TBD |
+| MacBook | Pro 14" (M1) | Screen · Battery | $490 · $199 | Model was missing (2021). One step below the 14" M2. | TBD |
+| MacBook | Pro 13" (M1) | Screen · Battery | $380 · $179 | Model was missing (2020). Below the 13" M2. | TBD |
+| MacBook | Air 13" (M1) | Screen · Battery | $340 · $169 | Model was missing (2020). Older wedge design, below the Air 13" M2. | TBD |
+| MacBook | Pro 16" (Intel, 2019) | Screen · Battery | $450 · $199 | Model was missing. Older Intel model. | TBD |
+| MacBook | Pro 15" (Intel, 2016–2019) | Screen · Battery | $420 · $189 | Model was missing. Older Intel model. | TBD |
+| MacBook | Pro 13" (Intel, 2016–2020) | Screen · Battery | $360 · $169 | Model was missing. Older Intel model. | TBD |
+| MacBook | Air 13" (Intel, 2018–2020) | Screen · Battery | $320 · $159 | Model was missing. Older Intel Retina Air. | TBD |
+
+*MacBook rows: other repairs (keyboard, water damage and so on) still use one price for all models. Tell Claude Code if any should differ by model.*
 
 **Also confirm:** are **all** existing prices in the quote tool correct? → TBD *(if not, list the changes or attach your price list)*
 
