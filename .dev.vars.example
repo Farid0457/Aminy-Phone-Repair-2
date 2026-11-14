@@ -1,0 +1,9 @@
+# Local secrets for `npm run dev` (wrangler dev).
+# Copy this file to .dev.vars — .dev.vars is git-ignored. Never commit real keys.
+# Production secrets are set with: npx wrangler secret put <NAME>
+
+# Cloudflare Turnstile TEST secret — always passes. Real key: docs/manual/03-cloudflare-setup.md §5
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+
+# Only needed when EMAIL_PROVIDER=resend. Real key: docs/manual/03-cloudflare-setup.md §6
+# RESEND_API_KEY=

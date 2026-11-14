@@ -22,17 +22,17 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 
 ## Phase 0: Foundation
 
-### [ ] 0.1 Initialise git
+### [x] 0.1 Initialise git
 - `git init`, default branch `main`.
 - Create `.gitignore`: `node_modules/`, `.wrangler/`, `.dev.vars`, `.DS_Store`, `Thumbs.db`, `*.log`.
 - First commit of the project **as it is now**, before restructuring: `chore: initial import of static site`.
 - **Accept:** `git log` shows one commit, and `.dev.vars` is ignored.
 
-### [ ] 0.2 Move the site into `public/`
+### [x] 0.2 Move the site into `public/`
 - `git mv index.html css js public/`. Relative paths don't change, because everything moves together.
 - **Accept:** opening `public/index.html` through the dev server (0.3) looks exactly like before, with no 404s in the network tab.
 
-### [ ] 0.3 Wrangler project
+### [x] 0.3 Wrangler project
 - `package.json`: `"private": true`, `"type": "module"`, devDependency `wrangler` (pin the current major), scripts:
   - `"dev": "wrangler dev"` (serves at http://localhost:8787)
   - `"deploy": "wrangler deploy"`
@@ -43,7 +43,7 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 - `.dev.vars.example` lists every secret with the Turnstile test values and a comment for each. Copy it to `.dev.vars`.
 - **Accept:** `npm install && npm run dev` serves the site at :8787. `GET /does-not-exist` returns a 404, because 404.html doesn't exist yet. `GET /api/x` returns JSON 404.
 
-### [ ] 0.4 Commit: `chore: restructure into public/ and add wrangler`
+### [x] 0.4 Commit: `chore: restructure into public/ and add wrangler`
 
 ---
 

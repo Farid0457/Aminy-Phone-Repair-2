@@ -1,0 +1,15 @@
+{
+  "name": "aminy-phone-repair",
+  "private": true,
+  "type": "module",
+  "description": "Aminy Phone Repair website — static site + contact API on Cloudflare Workers",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test test/",
+    "smoke": "node scripts/smoke-contact.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.162.0"
+  }
+}
