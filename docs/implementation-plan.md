@@ -90,7 +90,8 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 - Leave `href`s that are still `TBD` in business-info as `#` with a `data-todo` attribute. Phase 3 either fills them in or removes the link.
 - **Accept:** the icons render in both the light and dark parts of the footer, and screen reader names stay correct.
 
-### [ ] 1.8 Commit after each task. Run a final check across the whole page at 375px, 768px and 1280px.
+### [x] 1.8 Commit after each task. Run a final check across the whole page at 375px, 768px and 1280px.
+- *Checked 2026-11-14 in headless Chrome at all three widths: no horizontal scroll, no console errors, full keyboard quote flow → Book → contact form. Extracted price data confirmed identical to the original (1.1 spot-checks).*
 
 ---
 
