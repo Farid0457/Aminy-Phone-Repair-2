@@ -64,7 +64,7 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 - New models get proposed prices, which also go in the sign-off table.
 - **Accept:** each list is ordered newest first, and every addition is in the sign-off table with its source.
 
-### [ ] 1.4 Quote result: total only (D-04, 3.5)
+### [x] 1.4 Quote result: total only (D-04, 3.5)
 - Remove the Parts, Labour and GST rows and the 30% labour calculation.
 - Show the price, `incl. GST`, the time badge, and the disclaimer "Estimate only — final price confirmed after free diagnosis."
 - Update the hero card copy, "see an itemised price with parts, labour and GST", to match (e.g. "see an estimated price incl. GST").

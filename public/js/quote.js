@@ -178,14 +178,10 @@ export function buildQuote(){
   }
 
   function showResult(){
-    const base=getPrice(selectedIssue,selectedModel);
-    const labour=Math.round(base*0.3), parts=base-labour;
-    const gst=Math.round((parts+labour)*0.1), total=parts+labour+gst;
+    // Table prices already include GST (D-04): show them as-is, no breakdown.
+    const total=getPrice(selectedIssue,selectedModel);
     document.getElementById('iq-result-device').textContent=selectedModel;
     document.getElementById('iq-result-issue').textContent=selectedIssue.name;
-    document.getElementById('iq-price-parts').textContent=`$${parts}`;
-    document.getElementById('iq-price-labour').textContent=`$${labour}`;
-    document.getElementById('iq-price-gst').textContent=`$${gst}`;
     document.getElementById('iq-time').textContent=`⏱ ${selectedIssue.time} repair`;
     lastQuote={ model:selectedModel, issue:selectedIssue.name, total };
     show(result); setDots(4);

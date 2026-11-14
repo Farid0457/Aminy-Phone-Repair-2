@@ -101,7 +101,7 @@
       <aside class="hero-card" aria-labelledby="heroCardTitle">
         <span class="hero-card-tag">Instant quote</span>
         <h2 id="heroCardTitle">What needs fixing?</h2>
-        <p>Pick your device to see an itemised price with parts, labour and GST.</p>
+        <p>Pick your device to see an estimated price incl. GST.</p>
         <ol class="hero-steps">
           <li class="current"><span class="num">1</span>Device</li>
           <li><span class="num">2</span>Model</li>
@@ -548,12 +548,8 @@
               <div class="iq-result-issue" id="iq-result-issue"></div>
             </div>
             <div class="iq-result-body">
-              <div class="iq-price-row"><span>Parts</span><span id="iq-price-parts">&#8212;</span></div>
-              <div class="iq-price-row"><span>Labour</span><span id="iq-price-labour">&#8212;</span></div>
-              <div class="iq-price-row"><span>GST (10%)</span><span id="iq-price-gst">&#8212;</span></div>
-              <div class="iq-price-divider"></div>
               <div class="iq-price-total-row">
-                <span>Total Estimate</span>
+                <span>Estimated price <span class="iq-total-gst">incl. GST</span></span>
                 <span class="iq-total-amount" id="iq-total">$0</span>
               </div>
               <div class="iq-time-row">
@@ -561,7 +557,7 @@
               </div>
             </div>
             <div class="iq-result-footer">
-              <p class="iq-disclaimer">Prices are estimates. Final quote confirmed in-store after free diagnosis.</p>
+              <p class="iq-disclaimer">Estimate only — final price confirmed after free diagnosis.</p>
               <div class="iq-result-actions">
                 <a href="#contact" class="btn-primary" id="iq-book">Book This Repair</a>
                 <button class="iq-reset-btn" id="iq-back-result-issue">&#8592; Change Issue</button>
