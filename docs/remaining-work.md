@@ -41,7 +41,7 @@ Advertising claims must be accurate and able to be backed up.
 | 3.3 | Apple Watch list out of date | ✅ Done in task 1.3: added Series 11, Series 12, Ultra 3, Ultra 4 and SE 3. Was: It stops at Series 10 and Ultra 2. Series 11, Ultra 3 and SE 3 are missing, and possibly 2026 models too. |
 | 3.4 | General model refresh | ✅ Done in task 1.3: added iPhone 18 Pro/Pro Max and 17e, Pixel 11 range, Galaxy S26 FE, Z Fold8 Ultra/Fold8/Flip8, Razr 70 Ultra and Razr Fold. Was: Check every list for 2026 releases (iPhone, Pixel, Galaxy and so on). |
 | 3.5 | Made-up parts/labour split | ✅ Done in task 1.4: the result shows one price incl. GST (the table price), with no breakdown. This also fixed a bug where 10% GST was added on top of prices that already include it. Was: Labour is always 30% of the base price (`showResult()`), but it's shown as an itemised breakdown. Either use real numbers or show only the total incl. GST. |
-| 3.6 | "Book This Repair" loses the quote | It jumps to `#contact` without filling in the **Device & Issue** field. Pre-fill it with the chosen model, issue and estimate. |
+| 3.6 | "Book This Repair" loses the quote | ✅ Done in task 1.5: the quote is attached to the form and fills in Device & Issue. Was: It jumps to `#contact` without filling in the **Device & Issue** field. Pre-fill it with the chosen model, issue and estimate. |
 | 3.7 | Pricing data mixed in with code | About 640 lines of prices sit inside `quote.js`. Moving them to a separate `data/prices.json` (or similar) would let the owner update prices without touching the logic. |
 | 3.8 | Prices need owner sign-off | All figures are estimates that the business hasn't confirmed. |
 

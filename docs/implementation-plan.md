@@ -70,7 +70,7 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 - Update the hero card copy, "see an itemised price with parts, labour and GST", to match (e.g. "see an estimated price incl. GST").
 - **Accept:** the result card shows one price, which equals the price-table value. No text anywhere still says "parts, labour".
 
-### [ ] 1.5 "Book This Repair" pre-fills the contact form (3.6)
+### [x] 1.5 "Book This Repair" pre-fills the contact form (3.6)
 - Follow the hand-off in `docs/architecture.md` ("Front-end ↔ quote hand-off").
 - Export a small function from `contact.js`, e.g. `attachQuote({model, issue, total})`, and have `quote.js` call it. Don't let the two modules reach into each other's DOM.
 - The "Quote attached" note has a remove (×) button that clears the attached quote.
