@@ -49,10 +49,10 @@ Advertising claims must be accurate and able to be backed up.
 
 | # | Item | Detail |
 |---|------|--------|
-| 4.1 | Focus lost between quote steps | When a step is hidden, keyboard focus stays on the hidden button. It should move to the new step's heading. |
-| 4.2 | Selection state not announced | Device, model and issue buttons toggle a `.selected` class but have no `aria-pressed`. |
-| 4.3 | Progress not announced | `.iq-progress` is `aria-hidden` and there's no text such as "Step 2 of 4". |
-| 4.4 | Decorative SVGs exposed | Quote-section icons (`index.html:337+`, and the issue icons in `quote.js`) are missing `aria-hidden="true"`. |
+| 4.1 | Focus lost between quote steps | ✅ Fixed in task 1.6 (screen-reader check pending). Was: When a step is hidden, keyboard focus stays on the hidden button. It should move to the new step's heading. |
+| 4.2 | Selection state not announced | ✅ Fixed in task 1.6 (screen-reader check pending). Was: Device, model and issue buttons toggle a `.selected` class but have no `aria-pressed`. |
+| 4.3 | Progress not announced | ✅ Fixed in task 1.6 (screen-reader check pending). Was: `.iq-progress` is `aria-hidden` and there's no text such as "Step 2 of 4". |
+| 4.4 | Decorative SVGs exposed | ✅ Fixed in task 1.6 (screen-reader check pending). Was: Quote-section icons (`index.html:337+`, and the issue icons in `quote.js`) are missing `aria-hidden="true"`. |
 | 4.5 | Contrast check | Run an audit (e.g. Lighthouse or axe) on the accent orange against light backgrounds. |
 
 ## 5. SEO and local discoverability 🟠

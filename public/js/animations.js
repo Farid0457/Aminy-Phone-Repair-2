@@ -4,6 +4,7 @@
 
 // ── Hero entrance ──
 export function animateHero() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;   // show it as-is
   const items = [
     { el: document.querySelector('.hero-eyebrow'),  delay: 0.1 },
     { el: document.querySelector('.hero-headline'), delay: 0.3 },

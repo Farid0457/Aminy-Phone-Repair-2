@@ -76,7 +76,8 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 - The "Quote attached" note has a remove (×) button that clears the attached quote.
 - **Accept:** choose a quote, click Book: `#device` is filled in, the note is visible, focus is on `#firstName`, and the hash is `#contact`. Starting over or removing the note clears the attached quote.
 
-### [ ] 1.6 Quote tool accessibility (4.1–4.4)
+### [~] 1.6 Quote tool accessibility (4.1–4.4)
+- *Status: code done and keyboard flow checked in headless Chrome at 375px and 1280px (focus moves to each step heading, "Step N of 4" announced, aria-pressed in sync, no console errors). Still to do: the axe DevTools scan and an NVDA or Narrator pass.*
 - When the step changes, focus moves to the new step's label. Make the labels headings (`<h3 class="iq-step-label" tabindex="-1">`).
 - Add `type="button"` to every quote button, and `aria-pressed` to device, series, model and issue buttons, kept in step with `.selected`.
 - Add a visually hidden live region (`aria-live="polite"`) that announces "Step N of 4: <label>".

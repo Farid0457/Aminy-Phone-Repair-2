@@ -33,15 +33,26 @@ const ICON_MAP = {
   'RAM Upgrade':'ram','Motherboard Repair':'motherboard',
   'Crown Repair':'crown','Screen / Glass Repair':'screen',
 };
-function getIconSVG(n){ return ICONS[ICON_MAP[n]||'general']||ICONS.general; }
+// Icons are decorative: the button text names the repair.
+function getIconSVG(n){
+  return (ICONS[ICON_MAP[n]||'general']||ICONS.general).replace('<svg ','<svg aria-hidden="true" focusable="false" ');
+}
 
 // ─────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────
+const reducedMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const scrollBehavior=()=>reducedMotion()?'auto':'smooth';
+
+// Mark one button in a group as chosen (.selected for looks, aria-pressed for screen readers)
+function selectIn(buttons, chosen){
+  buttons.forEach(b=>{ const on=b===chosen; b.classList.toggle('selected',on); b.setAttribute('aria-pressed',String(on)); });
+}
+
 let countTimer=null;
 function animateCount(el, target){
   clearInterval(countTimer);   // stop any count still running from a previous quote
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent=`$${target}`; return; }
+  if(reducedMotion()){ el.textContent=`$${target}`; return; }
   let cur=0; const inc=target/40;
   countTimer=setInterval(()=>{ cur+=inc; if(cur>=target){cur=target;clearInterval(countTimer);} el.textContent=`$${Math.round(cur)}`; },20);
 }
@@ -70,15 +81,48 @@ export function buildQuote(){
   let seriesStep=null;
   let lastQuote=null;   // { model, issue, total } of the result currently shown
 
+  const announcer      = document.getElementById('iq-announce');
+  const deviceBtns     = [...document.querySelectorAll('.iq-device-btn')];
+  const seriesBtns     = [...document.querySelectorAll('.iq-samsung-btn')];
+  [...deviceBtns,...seriesBtns].forEach(b=>b.setAttribute('aria-pressed','false'));
+
   const allPanels=[step1,stepIphone,stepSamsung,stepSamsungTab,stepGoogle,stepOppo,stepMoto,stepIpad,step2,step3,result];
-  function show(panel){ allPanels.forEach(p=>p&&p.classList.add('iq-hidden')); panel.classList.remove('iq-hidden'); }
+  const seriesPanels=[stepIphone,stepSamsung,stepSamsungTab,stepGoogle,stepOppo,stepMoto,stepIpad];
+  function stepNumber(panel){
+    if(panel===step1) return 1;
+    if(panel===step3) return 3;
+    if(panel===result) return 4;
+    return 2;   // series pickers and the model grid
+  }
+  // The step heading's text without its "01"/"02" badge
+  function stepLabelText(heading){
+    return [...heading.childNodes].filter(n=>!n.classList?.contains('iq-step-num')).map(n=>n.textContent).join('').trim();
+  }
+
+  // Show one panel, move keyboard focus to its heading and announce the step (a11y 4.1–4.2).
+  function show(panel, {scroll=true}={}){
+    allPanels.forEach(p=>p&&p.classList.add('iq-hidden'));
+    panel.classList.remove('iq-hidden');
+    const heading=panel.querySelector('.iq-step-label, #iq-result-device');
+    if(!heading) return;
+    heading.focus({preventScroll:true});
+    if(scroll){
+      const r=heading.getBoundingClientRect();
+      if(r.top<0||r.bottom>window.innerHeight) heading.scrollIntoView({behavior:scrollBehavior(),block:'center'});
+    }
+    const label=panel===result ? 'Your estimate' : stepLabelText(heading);
+    if(announcer){
+      announcer.textContent='';   // clear first so a repeated message is read again
+      setTimeout(()=>{ announcer.textContent=`Step ${stepNumber(panel)} of 4: ${label}`; },50);
+    }
+  }
   function setDots(n){ dots.forEach((d,i)=>d.classList.toggle('active',i<n)); }
 
   // Step 1 — device type
-  document.querySelectorAll('.iq-device-btn').forEach(btn=>{
+  deviceBtns.forEach(btn=>{
     btn.addEventListener('click',()=>{
       const cat=btn.dataset.category;
-      document.querySelectorAll('.iq-device-btn').forEach(b=>b.classList.toggle('selected',b===btn));
+      selectIn(deviceBtns,btn);
       if(cat==='iphone'){      seriesStep='iphone';      show(stepIphone);     setDots(2); return; }
       if(cat==='samsung'){     seriesStep='samsung';     show(stepSamsung);    setDots(2); return; }
       if(cat==='samsung_tab'){ seriesStep='samsung_tab'; show(stepSamsungTab); setDots(2); return; }
@@ -96,15 +140,17 @@ export function buildQuote(){
     qb.addEventListener('click',()=>{
       const target=document.querySelector(`.iq-device-btn[data-category="${qb.dataset.quick}"]`);
       if(target) target.click();
-      document.getElementById('instant-quote').scrollIntoView({behavior:'smooth',block:'start'});
+      document.getElementById('instant-quote').scrollIntoView({behavior:scrollBehavior(),block:'start'});
     });
   });
 
   // All series pickers — same logic
-  [stepIphone,stepSamsung,stepSamsungTab,stepGoogle,stepOppo,stepMoto,stepIpad].forEach(picker=>{
+  seriesPanels.forEach(picker=>{
     if(!picker) return;
-    picker.querySelectorAll('.iq-samsung-btn').forEach(btn=>{
+    const btns=[...picker.querySelectorAll('.iq-samsung-btn')];
+    btns.forEach(btn=>{
       btn.addEventListener('click',()=>{
+        selectIn(btns,btn);
         selectedCategory=btn.dataset.series;
         buildModelGrid(QUOTE_DATA[selectedCategory]); show(step2); setDots(2);
       });
@@ -134,7 +180,7 @@ export function buildQuote(){
   document.getElementById('iq-back-result-model').addEventListener('click',()=>{ show(step2); setDots(2); });
   document.getElementById('iq-reset').addEventListener('click',()=>{
     selectedCategory=selectedModel=selectedIssue=seriesStep=null; lastQuote=null;
-    document.querySelectorAll('.iq-device-btn').forEach(b=>b.classList.remove('selected'));
+    selectIn([...deviceBtns,...seriesBtns],null);
     clearQuote();
     show(step1); setDots(1);
   });
@@ -152,10 +198,10 @@ export function buildQuote(){
     modelGrid.replaceChildren(...data.models.map(m=>{
       const mb=document.createElement('button');
       mb.type='button'; mb.className='iq-model-btn'; mb.textContent=m;
+      mb.setAttribute('aria-pressed','false');
       mb.addEventListener('click',()=>{
         selectedModel=m;
-        modelGrid.querySelectorAll('.iq-model-btn').forEach(b=>b.classList.remove('selected'));
-        mb.classList.add('selected');
+        selectIn([...modelGrid.querySelectorAll('.iq-model-btn')],mb);
         buildIssueGrid(QUOTE_DATA[selectedCategory]); show(step3); setDots(3);
       });
       return mb;
@@ -168,10 +214,11 @@ export function buildQuote(){
       ib.type='button'; ib.className='iq-issue-btn';
       ib.innerHTML=`<span class="iq-issue-icon">${getIconSVG(iss.name)}</span><span class="iq-issue-info"><span class="iq-issue-name"></span></span>`;
       ib.querySelector('.iq-issue-name').textContent=iss.name;
+      ib.setAttribute('aria-pressed','false');
       ib.addEventListener('click',()=>{
         selectedIssue=iss;
-        issueGrid.querySelectorAll('.iq-issue-btn').forEach(b=>b.classList.remove('selected'));
-        ib.classList.add('selected'); showResult();
+        selectIn([...issueGrid.querySelectorAll('.iq-issue-btn')],ib);
+        showResult();
       });
       return ib;
     }));
@@ -184,9 +231,9 @@ export function buildQuote(){
     document.getElementById('iq-result-issue').textContent=selectedIssue.name;
     document.getElementById('iq-time').textContent=`⏱ ${selectedIssue.time} repair`;
     lastQuote={ model:selectedModel, issue:selectedIssue.name, total };
-    show(result); setDots(4);
+    show(result,{scroll:false}); setDots(4);
     animateCount(document.getElementById('iq-total'),total);
-    result.scrollIntoView({behavior:'smooth',block:'center'});
+    result.scrollIntoView({behavior:scrollBehavior(),block:'center'});
   }
 }
 
