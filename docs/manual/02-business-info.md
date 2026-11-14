@@ -110,6 +110,29 @@ Claude Code adds a row here for every price it **proposes** (new models, fixed f
 | MacBook | Pro 13" (Intel, 2016–2020) | Screen · Battery | $360 · $169 | Model was missing. Older Intel model. | TBD |
 | MacBook | Air 13" (Intel, 2018–2020) | Screen · Battery | $320 · $159 | Model was missing. Older Intel Retina Air. | TBD |
 
+| iPhone | iPhone 18 Pro Max | Screen · Battery | $499 · $149 | New model (on sale 18 Sep 2026, [Apple newsroom](https://www.apple.com/newsroom/2026/09/apple-debuts-iphone-18-pro-and-iphone-18-pro-max/)). One step above the 17 Pro Max ($460 · $139). | TBD |
+| iPhone | iPhone 18 Pro | Screen · Battery | $459 · $139 | New model (same source). One step above the 17 Pro ($420 · $129). | TBD |
+| iPhone | iPhone 17e | Screen · Battery | $240 · $95 | New model (on sale 11 Mar 2026, [Apple AU newsroom](https://www.apple.com/au/newsroom/2026/03/apple-introduces-iphone-17e/)). One step above the 16e ($220 · $89). | TBD |
+| Samsung | Galaxy S26 FE | Screen | $260 | New model (on sale in AU 4 Sep 2026, [Samsung AU newsroom](https://news.samsung.com/au/samsung-galaxy-s26-fe-delivering-the-latest-flagship-experience-focused-on-what-matter-most)). One step above the S25 FE ($240). | TBD |
+| Samsung | Galaxy Z Fold8 Ultra | Screen | $950 | New model (on sale 7 Aug 2026, [Samsung newsroom](https://news.samsung.com/global/samsung-officially-launches-galaxy-z-fold8-ultra-fold8-flip8-watch-ultra2-and-watch9)). Above the Fold7 ($850). | TBD |
+| Samsung | Galaxy Z Fold8 | Screen | $900 | New model (same source). Above the Fold7 ($850). | TBD |
+| Samsung | Galaxy Z Flip8 | Screen | $480 | New model (same source). One step above the Flip7 ($450). | TBD |
+| Pixel | Pixel 11 Pro Fold | Screen · Camera | $600 · $230 | New model (on sale 20 Aug 2026, [GSMArena](https://www.gsmarena.com/google_unveils_the_pixel_11_pro_and_11_pro_xl_the_new_pixel_11_pro_fold_joins_them-news-74139.php)). One step above the 10 Pro Fold ($550 · $220). | TBD |
+| Pixel | Pixel 11 Pro XL | Screen · Camera | $410 · $210 | New model (same source). One step above the 10 Pro XL ($380 · $200). | TBD |
+| Pixel | Pixel 11 Pro | Screen · Camera | $380 · $200 | New model (same source). One step above the 10 Pro ($350 · $190). | TBD |
+| Pixel | Pixel 11 | Screen | $300 | New model ([Android Central](https://www.androidcentral.com/phones/live/made-by-google-2026-launch-live-pixel-11-pixel-11-pro-fold-pixel-watch-5-and-everything-that-was-announced)). One step above the Pixel 10 ($280). | TBD |
+| Apple Watch | Ultra 4 | Screen / glass | $320 | New model (on sale 18 Sep 2026, [Apple newsroom](https://www.apple.com/newsroom/2026/09/the-latest-iphone-apple-watch-and-airpods-lineups-arrive-in-stores-worldwide/)). Above the Ultra 3. | TBD |
+| Apple Watch | Series 12 | Screen / glass | $230 | New model (same source). Above the Series 11. | TBD |
+| Apple Watch | Ultra 3 | Screen / glass | $300 | Model was missing (Sep 2025). Above the Ultra 2 ($280). | TBD |
+| Apple Watch | Series 11 | Screen / glass | $215 | Model was missing (Sep 2025). Above the Series 10 ($200). | TBD |
+| Apple Watch | SE 3 | Screen / glass | $140 | Model was missing (Sep 2025). Above the SE 2nd Gen ($130 fallback). | TBD |
+| Motorola | Razr 70 Ultra | Screen | $450 | New model (on sale in AU 16 Jul 2026, [Pickr](https://www.pickr.com.au/news/2026/motorola-folds-two-ways-with-razr-70-ultra-razr-fold/)). Above the Razr 60 ($420). | TBD |
+| Motorola | Razr Fold | Screen | $750 | New book-style foldable (same source). Priced like a Galaxy Z Fold5 (large inner screen). Please check part costs. | TBD |
+
+*Task 1.3 rows: new models use their series' existing flat price for every repair not listed (for example Samsung, Pixel and Motorola batteries at $89, and Apple Watch batteries at $99). These aren't new prices, so they aren't listed.*
+
+*Not added in task 1.3, because there was no confirmed release or no Australian release as of 14 Nov 2026: a foldable iPhone, the iPhone 18 (base model, expected 2027), a 12th-gen iPad, an OLED iPad mini, OPPO Find X9 Ultra (no AU release), OPPO Reno16, Galaxy Tab S11 FE, and new 2026 Galaxy A models beyond those already listed.*
+
 *MacBook rows: other repairs (keyboard, water damage and so on) still use one price for all models. Tell Claude Code if any should differ by model.*
 
 **Also confirm:** are **all** existing prices in the quote tool correct? → TBD *(if not, list the changes or attach your price list)*

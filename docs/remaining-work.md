@@ -38,8 +38,8 @@ Advertising claims must be accurate and able to be backed up.
 |---|------|--------|
 | 3.1 | **MacBook pricing bug** | ✅ Done in task 1.2: every model now has an explicit screen and battery price (pending sign-off). Was: the M2 Air 13" and 15" have no screen price, so they fall back to `_default: 299`. That's cheaper than the M3 Air's $420. |
 | 3.2 | MacBook list incomplete | ✅ Done in task 1.2: added M1, M2 Pro, M4 Air, M5, M6, Neo and Intel 2016–2020 models. Was: only M2–M4 models are listed. There are no Intel, M1 or M5 MacBooks. |
-| 3.3 | Apple Watch list out of date | It stops at Series 10 and Ultra 2. Series 11, Ultra 3 and SE 3 are missing, and possibly 2026 models too. |
-| 3.4 | General model refresh | Check every list for 2026 releases (iPhone, Pixel, Galaxy and so on). |
+| 3.3 | Apple Watch list out of date | ✅ Done in task 1.3: added Series 11, Series 12, Ultra 3, Ultra 4 and SE 3. Was: It stops at Series 10 and Ultra 2. Series 11, Ultra 3 and SE 3 are missing, and possibly 2026 models too. |
+| 3.4 | General model refresh | ✅ Done in task 1.3: added iPhone 18 Pro/Pro Max and 17e, Pixel 11 range, Galaxy S26 FE, Z Fold8 Ultra/Fold8/Flip8, Razr 70 Ultra and Razr Fold. Was: Check every list for 2026 releases (iPhone, Pixel, Galaxy and so on). |
 | 3.5 | Made-up parts/labour split | Labour is always 30% of the base price (`showResult()`), but it's shown as an itemised breakdown. Either use real numbers or show only the total incl. GST. |
 | 3.6 | "Book This Repair" loses the quote | It jumps to `#contact` without filling in the **Device & Issue** field. Pre-fill it with the chosen model, issue and estimate. |
 | 3.7 | Pricing data mixed in with code | About 640 lines of prices sit inside `quote.js`. Moving them to a separate `data/prices.json` (or similar) would let the owner update prices without touching the logic. |

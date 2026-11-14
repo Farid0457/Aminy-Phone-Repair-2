@@ -39,7 +39,7 @@ function iphoneIssues(screenPrices, battPrices){
 
 const SAMSUNG_ISSUES = [
   { name:'Screen Replacement',  time:'30–90 min', prices:{
-    'Galaxy S26 Ultra':480,'Galaxy S26 Edge':420,'Galaxy S26+':400,'Galaxy S26':340,
+    'Galaxy S26 Ultra':480,'Galaxy S26 Edge':420,'Galaxy S26+':400,'Galaxy S26':340,'Galaxy S26 FE':260,
     'Galaxy S25 Ultra':450,'Galaxy S25+':380,'Galaxy S25':320,'Galaxy S25 FE':240,
     'Galaxy S24 Ultra':420,'Galaxy S24+':350,'Galaxy S24':290,'Galaxy S24 FE':220,
     'Galaxy S23 Ultra':380,'Galaxy S23+':320,'Galaxy S23':270,'Galaxy S23 FE':200,
@@ -49,8 +49,10 @@ const SAMSUNG_ISSUES = [
     'Galaxy S10+':200,'Galaxy S10':180,'Galaxy S10e':160,'Galaxy S10 5G':200,'Galaxy S10 Lite':170,
     'Galaxy S9+':170,'Galaxy S9':150,'Galaxy S8+':150,'Galaxy S8':130,
     'Galaxy S7 Edge':130,'Galaxy S7':110,
+    'Galaxy Z Fold8 Ultra':950,'Galaxy Z Fold8':900,
     'Galaxy Z Fold7':850,'Galaxy Z Fold6':800,'Galaxy Z Fold5':750,'Galaxy Z Fold4':700,
     'Galaxy Z Fold3 5G':650,'Galaxy Z Fold2 5G':600,'Galaxy Fold':550,
+    'Galaxy Z Flip8':480,
     'Galaxy Z Flip7':450,'Galaxy Z Flip6':420,'Galaxy Z Flip5':390,'Galaxy Z Flip4':360,
     'Galaxy Z Flip3 5G':320,'Galaxy Z Flip 5G':290,'Galaxy Z Flip':260,
     _default:180 }},
@@ -64,12 +66,12 @@ const SAMSUNG_ISSUES = [
 ];
 
 const PIXEL_ISSUES = [
-  { name:'Screen Replacement',  time:'1–2 hrs',   prices:{ 'Pixel 10 Pro Fold':550,'Pixel 9 Pro Fold':500,'Pixel Fold':450,'Pixel 10 Pro XL':380,'Pixel 10 Pro':350,'Pixel 10':280,'Pixel 10a':220,'Pixel 9 Pro XL':340,'Pixel 9 Pro':310,'Pixel 9':260,'Pixel 9a':200,'Pixel 8 Pro':290,'Pixel 8':230,'Pixel 8a':180,'Pixel 7 Pro':250,'Pixel 7':200,'Pixel 7a':170,'Pixel 6 Pro':230,'Pixel 6':180,'Pixel 6a':160,'Pixel 5':170,'Pixel 5a (5G)':160,'Pixel 4 XL':160,'Pixel 4':150,'Pixel 4a (5G)':150,'Pixel 4a':140,'Pixel 3 XL':140,'Pixel 3':130,'Pixel 3a XL':130,'Pixel 3a':120,'Pixel 2 XL':130,'Pixel 2':120,'Pixel XL':110,'Pixel (1st Gen)':100, _default:180 } },
+  { name:'Screen Replacement',  time:'1–2 hrs',   prices:{ 'Pixel 11 Pro Fold':600,'Pixel 11 Pro XL':410,'Pixel 11 Pro':380,'Pixel 11':300,'Pixel 10 Pro Fold':550,'Pixel 9 Pro Fold':500,'Pixel Fold':450,'Pixel 10 Pro XL':380,'Pixel 10 Pro':350,'Pixel 10':280,'Pixel 10a':220,'Pixel 9 Pro XL':340,'Pixel 9 Pro':310,'Pixel 9':260,'Pixel 9a':200,'Pixel 8 Pro':290,'Pixel 8':230,'Pixel 8a':180,'Pixel 7 Pro':250,'Pixel 7':200,'Pixel 7a':170,'Pixel 6 Pro':230,'Pixel 6':180,'Pixel 6a':160,'Pixel 5':170,'Pixel 5a (5G)':160,'Pixel 4 XL':160,'Pixel 4':150,'Pixel 4a (5G)':150,'Pixel 4a':140,'Pixel 3 XL':140,'Pixel 3':130,'Pixel 3a XL':130,'Pixel 3a':120,'Pixel 2 XL':130,'Pixel 2':120,'Pixel XL':110,'Pixel (1st Gen)':100, _default:180 } },
   { name:'Battery Replacement', time:'1–2 hrs',   prices:{ _default:89  } },
   { name:'Charging Port',       time:'1 hr',      prices:{ _default:89  } },
   { name:'Back Glass Repair',   time:'1–2 hrs',   prices:{ _default:120 } },
   { name:'Water Damage',        time:'1–3 hrs',   prices:{ _default:149 } },
-  { name:'Camera Repair',       time:'45–90 min', prices:{ 'Pixel 10 Pro Fold':220,'Pixel 10 Pro XL':200,'Pixel 10 Pro':190,'Pixel 9 Pro Fold':210,'Pixel 9 Pro XL':190,'Pixel 9 Pro':180, _default:149 } },
+  { name:'Camera Repair',       time:'45–90 min', prices:{ 'Pixel 11 Pro Fold':230,'Pixel 11 Pro XL':210,'Pixel 11 Pro':200,'Pixel 10 Pro Fold':220,'Pixel 10 Pro XL':200,'Pixel 10 Pro':190,'Pixel 9 Pro Fold':210,'Pixel 9 Pro XL':190,'Pixel 9 Pro':180, _default:149 } },
   { name:'Speaker / Mic Fix',   time:'30–60 min', prices:{ _default:79  } },
   { name:'Data Recovery',       time:'1–4 hrs',   prices:{ _default:149 } },
 ];
@@ -93,7 +95,7 @@ const STAB_ISSUES = [
 
 const MOTO_ISSUES = [
   { name:'Screen Replacement',  time:'1–2 hrs',   prices:{
-    'Motorola Razr 60':420,'Motorola Razr 50 Ultra':380,'Motorola Razr 50':320,
+    'Motorola Razr Fold':750,'Motorola Razr 70 Ultra':450,'Motorola Razr 60':420,'Motorola Razr 50 Ultra':380,'Motorola Razr 50':320,
     'Motorola Razr 40 Ultra':350,'Motorola Razr 40':290,'Motorola Razr 2022':260,
     'Motorola Edge 2026':340,'Motorola Edge 2025':300,'Motorola Edge 60 Pro':280,
     'Motorola Edge 50 Ultra':260,'Motorola Edge 50 Pro':240,'Motorola Edge 40 Pro':220,
@@ -133,12 +135,20 @@ export const QUOTE_DATA = {
   google:  { label:'Google Pixel',models:[], issues:[] },
 
   // ── iPhone series ──
+  iphone_18: {
+    label:'iPhone 18 Series',
+    models:['iPhone 18 Pro Max','iPhone 18 Pro'],
+    issues: iphoneIssues(
+      { 'iPhone 18 Pro Max':499,'iPhone 18 Pro':459, _default:459 },
+      { 'iPhone 18 Pro Max':149,'iPhone 18 Pro':139, _default:139 }
+    ),
+  },
   iphone_17: {
     label:'iPhone 17 Series',
-    models:['iPhone 17 Pro Max','iPhone 17 Pro','iPhone Air','iPhone 17'],
+    models:['iPhone 17 Pro Max','iPhone 17 Pro','iPhone Air','iPhone 17','iPhone 17e'],
     issues: iphoneIssues(
-      { 'iPhone 17 Pro Max':460,'iPhone 17 Pro':420,'iPhone Air':380,'iPhone 17':340, _default:380 },
-      { 'iPhone 17 Pro Max':139,'iPhone 17 Pro':129,'iPhone Air':119,'iPhone 17':109, _default:119 }
+      { 'iPhone 17 Pro Max':460,'iPhone 17 Pro':420,'iPhone Air':380,'iPhone 17':340,'iPhone 17e':240, _default:380 },
+      { 'iPhone 17 Pro Max':139,'iPhone 17 Pro':129,'iPhone Air':119,'iPhone 17':109,'iPhone 17e':95, _default:119 }
     ),
   },
   iphone_16: {
@@ -222,7 +232,7 @@ export const QUOTE_DATA = {
   samsung_s: {
     label:'Galaxy S Series',
     models:[
-      'Galaxy S26 Ultra','Galaxy S26 Edge','Galaxy S26+','Galaxy S26',
+      'Galaxy S26 Ultra','Galaxy S26 Edge','Galaxy S26+','Galaxy S26','Galaxy S26 FE',
       'Galaxy S25 Ultra','Galaxy S25+','Galaxy S25','Galaxy S25 FE',
       'Galaxy S24 Ultra','Galaxy S24+','Galaxy S24','Galaxy S24 FE',
       'Galaxy S23 Ultra','Galaxy S23+','Galaxy S23','Galaxy S23 FE',
@@ -257,14 +267,21 @@ export const QUOTE_DATA = {
   samsung_z: {
     label:'Galaxy Z Series',
     models:[
+      'Galaxy Z Fold8 Ultra','Galaxy Z Fold8',
       'Galaxy Z Fold7','Galaxy Z Fold6','Galaxy Z Fold5','Galaxy Z Fold4',
       'Galaxy Z Fold3 5G','Galaxy Z Fold2 5G','Galaxy Fold',
+      'Galaxy Z Flip8',
       'Galaxy Z Flip7','Galaxy Z Flip6','Galaxy Z Flip5','Galaxy Z Flip4',
       'Galaxy Z Flip3 5G','Galaxy Z Flip 5G','Galaxy Z Flip',
     ],
     issues: SAMSUNG_ISSUES,
   },
 
+  pixel_11: {
+    label:'Pixel 11 Series',
+    models:['Pixel 11 Pro Fold','Pixel 11 Pro XL','Pixel 11 Pro','Pixel 11'],
+    issues: PIXEL_ISSUES,
+  },
   pixel_10: {
     label:'Pixel 10 Series',
     models:['Pixel 10 Pro Fold','Pixel 10 Pro XL','Pixel 10 Pro','Pixel 10','Pixel 10a'],
@@ -478,13 +495,16 @@ export const QUOTE_DATA = {
   watch: {
     label:'Apple Watch',
     models:[
-      'Apple Watch Ultra 2','Apple Watch Ultra',
-      'Apple Watch Series 10','Apple Watch Series 9',
-      'Apple Watch Series 8','Apple Watch Series 7',
-      'Apple Watch SE (2nd Gen)','Apple Watch SE (1st Gen)',
+      'Apple Watch Ultra 4','Apple Watch Series 12',
+      'Apple Watch Ultra 3','Apple Watch Series 11','Apple Watch SE 3',
+      'Apple Watch Series 10',
+      'Apple Watch Ultra 2','Apple Watch Series 9',
+      'Apple Watch Ultra','Apple Watch Series 8','Apple Watch SE (2nd Gen)',
+      'Apple Watch Series 7',
+      'Apple Watch SE (1st Gen)',
     ],
     issues:[
-      { name:'Screen / Glass Repair', time:'1–2 hrs', prices:{'Apple Watch Ultra 2':280,'Apple Watch Ultra':260,'Apple Watch Series 10':200,'Apple Watch Series 9':180,'Apple Watch Series 8':160,'Apple Watch Series 7':150,_default:130} },
+      { name:'Screen / Glass Repair', time:'1–2 hrs', prices:{'Apple Watch Ultra 4':320,'Apple Watch Series 12':230,'Apple Watch Ultra 3':300,'Apple Watch Series 11':215,'Apple Watch SE 3':140,'Apple Watch Ultra 2':280,'Apple Watch Ultra':260,'Apple Watch Series 10':200,'Apple Watch Series 9':180,'Apple Watch Series 8':160,'Apple Watch Series 7':150,_default:130} },
       { name:'Battery Replacement',   time:'1–2 hrs', prices:{_default:99}  },
       { name:'Crown Repair',          time:'1 hr',    prices:{_default:89}  },
       { name:'Water Damage',          time:'1–3 hrs', prices:{_default:129} },
@@ -611,6 +631,7 @@ export const QUOTE_DATA = {
   moto_razr: {
     label:'Motorola Razr Series',
     models:[
+      'Motorola Razr Fold','Motorola Razr 70 Ultra',
       'Motorola Razr 60',
       'Motorola Razr 50 Ultra','Motorola Razr 50',
       'Motorola Razr 40 Ultra','Motorola Razr 40',

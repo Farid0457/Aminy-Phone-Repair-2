@@ -59,7 +59,7 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 - New prices are **proposals**. Add each one to the "Prices pending sign-off" table in `docs/manual/02-business-info.md`.
 - **Accept:** no MacBook model has a screen price lower than an older or smaller sibling. The table is updated.
 
-### [ ] 1.3 Refresh model lists (3.3, 3.4)
+### [x] 1.3 Refresh model lists (3.3, 3.4)
 - Use web search to check the current lineups (as of the implementation date) for Apple Watch, iPhone, iPad, MacBook, Galaxy S/A/Z/Tab, Pixel, OPPO and Motorola. Add any missing models released up to today.
 - New models get proposed prices, which also go in the sign-off table.
 - **Accept:** each list is ordered newest first, and every addition is in the sign-off table with its source.
