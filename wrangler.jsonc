@@ -15,8 +15,9 @@
 
   "observability": { "enabled": true },
 
-  // D1 database (D-13). database_id is a placeholder until step B4 runs
-  // `npx wrangler d1 create aminy-db` — local dev doesn't need a real one.
+  // D1 database (D-13). The live database "aminy-db" was created on 2026-11-14 and
+  // migration 0001 is applied remotely. `npm run dev` uses a local copy in
+  // .wrangler/state instead — run `npm run db:migrate:local` once to create its tables.
   "d1_databases": [
     {
       "binding": "DB",
