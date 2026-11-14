@@ -85,7 +85,7 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (wait
 - Respect reduced motion: `scrollIntoView` uses `behavior: 'auto'` when `prefers-reduced-motion` is set. `animateHero` skips the transition in that case too.
 - **Accept:** the whole quote flow works with the keyboard alone (Tab, Enter, Space). With NVDA or Narrator, each step change is announced and selected options say "pressed". The axe DevTools extension reports no issues in `#instant-quote`.
 
-### [ ] 1.7 Social links: SVG icons
+### [x] 1.7 Social links: SVG icons
 - Replace the text `f`, `in` and `tt` with inline SVG icons (Facebook, Instagram, TikTok) that have `aria-hidden`. The link keeps its `aria-label`.
 - Leave `href`s that are still `TBD` in business-info as `#` with a `data-todo` attribute. Phase 3 either fills them in or removes the link.
 - **Accept:** the icons render in both the light and dark parts of the footer, and screen reader names stay correct.
