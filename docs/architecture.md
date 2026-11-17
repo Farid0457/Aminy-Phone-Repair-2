@@ -101,7 +101,7 @@ Secrets are set with `npx wrangler secret put <NAME>` and never committed:
 | `TURNSTILE_SECRET_KEY` | contact.js | `1x0000000000000000000000000000000AA` (test key: always passes) |
 | `RESEND_API_KEY` | email.js (`resend`) | Not needed locally when `EMAIL_PROVIDER=log` |
 
-The public Turnstile **site key** goes in `index.html`. Locally, use the test site key `1x00000000000000000000AA`.
+The public Turnstile **site key** is in `index.html` (`data-sitekey` on `#turnstile`). `js/contact.js` loads Turnstile with explicit rendering and uses the test site key `1x00000000000000000000AA` on localhost, so local dev works with the test secret in `.dev.vars`.
 
 ## API contract: `POST /api/contact`
 

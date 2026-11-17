@@ -134,7 +134,7 @@ Review checkpoints with the owner: **B2** = 2.1–2.4 · **B4** = 2.5
 - **Accept:** `npm run smoke` gives 200, 400, 200 (and no email logged for the honeypot) and 405.
 
 ### [~] 2.4 Front-end form
-- *Partly done: code built (Turnstile test key, honeypot, fetch, fallback message). Still to do: submit it by hand in a browser (dev server and mobile width), and check the fallback with the server stopped.*
+- *Partly done: code built (Turnstile test key, honeypot, fetch, fallback message). Real Turnstile site key added 2026-11-17 (localhost uses the test key, picked in `js/contact.js`; the secret is stored with `wrangler secret put`). Still to do: submit it by hand in a browser (dev server and mobile width), and check the fallback with the server stopped.*
 - Add a Turnstile widget to the form: `<div class="cf-turnstile" data-sitekey="…">` and the script `https://challenges.cloudflare.com/turnstile/v0/api.js` with `async defer`. Use the **test site key** until 🧑 03-cloudflare-setup §5 is done, and keep the key in one obvious place.
 - Add the honeypot: `<div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>`, hidden off-screen with CSS (not `display:none`).
 - Rewrite `public/js/contact.js` to keep the existing client-side validation, then `fetch('/api/contact')` with JSON. While sending, disable the button and change its text to "Sending…".

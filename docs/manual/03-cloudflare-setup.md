@@ -12,7 +12,7 @@ Where each section fits:
 | 2 | Connect Wrangler on this PC | deploying from the terminal | ✅ done |
 | 3 | Domain → Cloudflare | custom domain, Email Routing | ⏳ to do: domain not bought yet |
 | 4 | Email Routing | final email delivery (plan task 2.6), free `info@` inbox | ⏳ after §3 |
-| 5 | Turnstile | spam protection (plan task 2.4) | ⏳ to do |
+| 5 | Turnstile | spam protection (plan task 2.4) | ✅ done 2026-11-17 (site key in `index.html`, secret stored) |
 | 6 | Resend (interim email) | emails before the domain is ready (plan task 2.5) | ⏳ to do |
 | 7 | First deploy | going live on workers.dev | ✅ done with option B (auto-deploy from GitHub) |
 | 8 | Custom domain + HTTPS | going live on aminyrepair.com.au | ⏳ after §3 |
