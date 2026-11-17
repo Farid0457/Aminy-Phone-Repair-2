@@ -9,7 +9,7 @@ Where each section fits:
 | § | What | Needed for | Status (2026-11-14) |
 |---|---|---|---|
 | 1 | Create the account | everything | ✅ done |
-| 2 | Connect Wrangler on this PC | deploying from the terminal | ✅ done (live D1 `aminy-db` also created and migrated) |
+| 2 | Connect Wrangler on this PC | deploying from the terminal | ✅ done |
 | 3 | Domain → Cloudflare | custom domain, Email Routing | ⏳ to do: domain not bought yet |
 | 4 | Email Routing | final email delivery (plan task 2.6), free `info@` inbox | ⏳ after §3 |
 | 5 | Turnstile | spam protection (plan task 2.4) | ⏳ to do |
@@ -17,7 +17,6 @@ Where each section fits:
 | 7 | First deploy | going live on workers.dev | ✅ done with option B (auto-deploy from GitHub) |
 | 8 | Custom domain + HTTPS | going live on aminyrepair.com.au | ⏳ after §3 |
 | 9 | Web Analytics | visitor stats | ⏳ after §3 |
-| 10 | Cloudflare Access | admin login for `/admin` (plan task 2.9) | ⏳ after tasks 2.7–2.8 |
 
 ---
 
@@ -166,23 +165,6 @@ Once the domain shows **Active** (§3c):
 1. Dashboard → **Analytics & Logs → Web Analytics → Add a site**.
 2. Choose `aminyrepair.com.au`. Because the domain is on Cloudflare, choose **automatic setup** (Cloudflare adds the script for you, nothing to change in code).
 3. Stats appear within a few hours. The CSP in plan task 5.1 already allows the analytics script.
-
-## §10 Cloudflare Access: login for the admin page
-
-Do this **after** Claude Code has built the admin page (tasks 2.7–2.8). Access is free for up to 50 users, and you log in with a one-time PIN sent to your email, so there's no password to manage (D-14).
-
-1. Dashboard → **Zero Trust**. The first time, choose a **team name** (e.g. `aminy`). This becomes your team domain `aminy.cloudflareaccess.com`. Choose the **Free** plan. It may ask for a payment method, but the free plan isn't charged.
-2. **Settings → Authentication → Login methods:** make sure **One-time PIN** is listed.
-3. **Access → Applications → Add an application → Self-hosted:**
-   - **Application name:** `Aminy admin`
-   - **Application domain:** `aminy-phone-repair-2.<your-subdomain>.workers.dev` with path `admin`, then add a second entry with the same host and path `api/admin`. Once the domain is live, add the same two paths for `aminyrepair.com.au`.
-4. **Policy:** name `Owner only`, action **Allow**, include **Emails** → your email address (and any staff you trust).
-5. Save. Then open the application again and copy its **Application Audience (AUD) tag**.
-6. Give Claude Code the **team domain** and the **AUD tag**. Neither is secret. Then say *"Access is set up, do task 2.9."*
-
-**Check:** open `/admin` in a private window. Cloudflare should ask for your email and send you a PIN.
-
----
 
 ## Troubleshooting
 

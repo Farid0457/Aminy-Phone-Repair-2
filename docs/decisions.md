@@ -75,22 +75,13 @@ The browser sends the form to `POST /api/contact`. The Worker validates it, chec
 - `.com.au` requires an **ABN** (Australian Business Number).
 - Until the domain is ready, the site runs on the free `aminy-phone-repair-2.<subdomain>.workers.dev` address. The domain hasn't been bought yet.
 
-## D-13 Database: Cloudflare D1 — **Accepted** (live)
+## D-13 Database: Cloudflare D1 — **Superseded by D-17** (2026-11-17)
 
-- **Live since 2026-11-14:** `aminy-db` was created in the owner's Cloudflare account (`database_id` `80b99810-b5ab-4bb1-8bee-782abb120fd8` in `wrangler.jsonc`), and migration `0001_create_enquiries.sql` is applied remotely. The ID isn't a secret.
+- Was: every enquiry saved to a D1 database `aminy-db` first, then emailed. The code, migration and `d1_databases` binding were removed in D-17. The database itself was created in the owner's Cloudflare account on 2026-11-14 and may still exist there (it holds no real enquiries). Deleting it is the owner's choice (D-17).
 
-- A free D1 (SQLite) database `aminy-db`, bound to the Worker as `env.DB`. Every enquiry is **saved first, then emailed**, so a failed email never loses a lead (`email_sent` records whether the email went out).
-- The schema lives in `migrations/` (numbered SQL files). **Never edit a migration that has already been applied.** Add a new numbered file instead.
-- Local development uses a local copy of the database in `.wrangler/state` (git-ignored). Real data only exists in the remote database.
-- Privacy: only the form fields are stored. No IP addresses or tracking data. Enquiries marked done or spam can be deleted from the admin page (retention policy to be stated in privacy.html).
+## D-14 Admin area: `/admin` protected by Cloudflare Access — **Superseded by D-17** (2026-11-17)
 
-## D-14 Admin area: `/admin` protected by Cloudflare Access — **Accepted** (not built yet: tasks 2.7–2.9)
-
-- `public/admin/` is a static page that calls `/api/admin/*`.
-- **Login is Cloudflare Access** (free for up to 50 users, one-time PIN by email), so we don't build a password system.
-- Defence in depth: Access blocks `/admin*` and `/api/admin/*` at the edge, **and** the Worker checks the `Cf-Access-Jwt-Assertion` token on every `/api/admin/*` request (team domain and AUD tag from `wrangler.jsonc` vars).
-- Local development only: `ADMIN_DEV_BYPASS=true` in `.dev.vars` skips the token check. It must never be set in production, and the Worker refuses the bypass unless the request is to `localhost`/`127.0.0.1`.
-- Later options (not yet planned): editing prices from the admin page, and repair-status tracking for customers.
+- Was: an admin page at `/admin` behind Cloudflare Access, with an admin API that checked the Access token. The admin API (task 2.7, commit e5ff435) was built and then removed. The page (2.8) and the Access setup (2.9) were never built. The code is in git history if it's ever wanted again.
 
 ## D-15 Deploys: Workers Builds from GitHub `main` — **Accepted** (live)
 
@@ -101,3 +92,11 @@ The browser sends the form to `POST /api/contact`. The Worker validates it, chec
 
 - A model is added to the quote tool only when its release is confirmed by the maker or a reliable outlet **and** it's sold in Australia. Rumoured or overseas-only models (e.g. a foldable iPhone, OPPO Find X9 Ultra) are left out until they are.
 - New models get a proposed price one step above the model they replace, and are added to the sign-off table in 02 §8 with the source.
+
+## D-17 Enquiries are email only: no database, no admin page — **Accepted** (owner, 2026-11-17)
+
+- The owner reads enquiries in their inbox and doesn't need an admin page. So `/api/contact` validates the form, checks Turnstile and **only sends the email** (D-02: Resend for now, then Cloudflare Email Routing).
+- If the email fails, the API returns `502 delivery_failed` and the form shows the shop's phone number and email address instead, so the customer can still get in touch. Nothing is stored, so an enquiry whose email failed isn't kept anywhere. Failures show in `npx wrangler tail` and the Workers logs.
+- Removed: `src/admin.js`, `src/access.js`, the admin part of `src/validate.js`, their tests, `scripts/smoke-admin.mjs`, `migrations/`, the `d1_databases` binding and the `db:*` / `smoke:admin` npm scripts. Plan tasks 2.0 and 2.7 are reverted, and 2.8–2.9 are dropped. Cloudflare Access isn't needed.
+- Privacy is simpler: the website keeps no copy of enquiries. They exist only in the owner's inbox (and the email provider's logs).
+- The live D1 database `aminy-db` is no longer used. The owner can delete it in the dashboard (Storage & Databases → D1 → aminy-db → Settings → Delete), or Claude Code can run `npx wrangler d1 delete aminy-db` after asking. Leaving it costs nothing.

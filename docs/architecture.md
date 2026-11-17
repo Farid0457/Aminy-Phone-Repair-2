@@ -8,7 +8,6 @@ flowchart LR
   CF -->|static file exists| A[(public/ static assets)]
   V -->|POST /api/contact| W[Worker src/worker.js]
   W -->|verify token| T[Turnstile siteverify]
-  W -->|save enquiry first| D[(D1 aminy-db, binding DB)]
   W -->|EMAIL_PROVIDER=cloudflare| E[send_email binding → Email Routing]
   W -->|EMAIL_PROVIDER=resend| R[Resend API]
   W -->|EMAIL_PROVIDER=log| L[console, dev only]
@@ -27,8 +26,8 @@ flowchart LR
 | Worker | `aminy-phone-repair-2` on `https://aminy-phone-repair-2.<subdomain>.workers.dev`, deployed by Workers Builds on every push to GitHub `main` (D-15) |
 | Site | Phase 0–1 version: quote tool with one GST-inclusive price, new models, accessibility work |
 | `/api/contact` | Deployed, but **live submissions fail** until the owner sets the Turnstile secret and an email provider, and the workers.dev URL is added to `ALLOWED_ORIGINS` (03 §5–6) |
-| D1 `aminy-db` | Created, with the `enquiries` table (migration 0001) applied remotely |
-| Domain, Email Routing, Access, Web Analytics | Not set up yet |
+| Database | None. Enquiries are email only (D-17) |
+| Domain, Email Routing, Web Analytics | Not set up yet |
 
 ## File layout
 
@@ -37,31 +36,23 @@ Items marked *(planned)* don't exist yet. The task that creates each one is in b
 ```
 aminy-v2-phone/
 ├── CLAUDE.md                 # instructions for Claude Code
-├── package.json              # wrangler (dev dependency) + scripts (dev, deploy, test, smoke, db:*)
-├── wrangler.jsonc            # Worker aminy-phone-repair-2 + assets + D1 binding
+├── package.json              # wrangler (dev dependency) + scripts (dev, deploy, test, smoke)
+├── wrangler.jsonc            # Worker aminy-phone-repair-2 + assets + vars
 ├── .dev.vars.example         # template for local secrets (copy to .dev.vars)
 ├── .gitignore                # node_modules, .wrangler, .dev.vars, .claude/settings.local.json
-├── migrations/
-│   └── 0001_create_enquiries.sql   # enquiries table (D-13)
 ├── src/
 │   ├── worker.js             # router: /api/contact → handler, else assets
-│   ├── contact.js            # method, origin, size, honeypot, validate, Turnstile, save to D1, email
+│   ├── contact.js            # method, origin, size, honeypot, validate, Turnstile, email
 │   ├── validate.js           # pure validation functions (unit-tested)
 │   ├── email.js              # providers: log | resend | cloudflare
-│   ├── http.js               # json() helper: JSON + Cache-Control: no-store
-│   ├── access.js             # requireAdmin(): Cloudflare Access JWT check (D-14)
-│   └── admin.js              # /api/admin/enquiries list, get, patch, delete
+│   └── http.js               # json() helper: JSON + Cache-Control: no-store
 ├── test/
-│   ├── validate.test.js      # node:test unit tests: contact form
-│   ├── admin-validate.test.js  # admin input checks
-│   └── access.test.js        # Access JWT checks
+│   └── validate.test.js      # node:test unit tests: contact form
 ├── scripts/
 │   ├── smoke-contact.mjs     # POSTs sample payloads to a running server
-│   ├── smoke-admin.mjs       # exercises /api/admin/* (npm run smoke:admin)
 │   └── make-images.mjs       # (planned, 4.3) renders og-image.png + icons from SVG
 ├── public/                   # ← everything here is publicly served
 │   ├── index.html            # still has an inline <script type="module"> until 5.1
-│   ├── admin/                # (planned, 2.8) index.html, admin.css, admin.js
 │   ├── 404.html  privacy.html  terms.html  warranty.html      # (planned, 3.3)
 │   ├── robots.txt  sitemap.xml  _headers  site.webmanifest    # (planned, 4.x / 5.1)
 │   ├── assets/               # (planned, 4.3) og-image.png, apple-touch-icon.png, icons
@@ -90,12 +81,7 @@ aminy-v2-phone/
     "run_worker_first": ["/api/*"]
   },
   "observability": { "enabled": true },
-  "d1_databases": [{
-    "binding": "DB",                     // env.DB in the Worker
-    "database_name": "aminy-db",
-    "database_id": "80b99810-b5ab-4bb1-8bee-782abb120fd8",
-    "migrations_dir": "migrations"
-  }],
+  // No database (D-17)
   "vars": {
     "EMAIL_PROVIDER": "log",             // now: log. Next: resend (2.5), then cloudflare (2.6)
     "MAIL_FROM": "",                     // resend: onboarding@resend.dev; later quotes@aminyrepair.com.au
@@ -105,7 +91,6 @@ aminy-v2-phone/
   }
   // Added in 2.6 once Email Routing is live:
   // "send_email": [{ "name": "SEND_EMAIL", "destination_address": "<owner inbox>" }]
-  // Added in 2.9: ACCESS_TEAM_DOMAIN and ACCESS_AUD in vars
 }
 ```
 
@@ -144,9 +129,9 @@ Request: `Content-Type: application/json`
 | Origin | reject with 403 if the `Origin` header isn't in `ALLOWED_ORIGINS` (localhost is allowed in dev) |
 | Body size | reject with 413 if larger than 10 KB |
 
-Responses: `200 {ok:true, id}` (id = the saved D1 row, or `null` if only the email went through) · `200 {ok:true}` for the honeypot · `400 {ok:false, error, fields:[...]}` · `403 {ok:false, error:"verification_failed"}` or `"forbidden_origin"` · `405` for anything other than POST · `413` · `502 {ok:false, error:"delivery_failed"}` only when **both** the database save and the email fail.
+Responses: `200 {ok:true}` (email sent, or honeypot) · `400 {ok:false, error, fields:[...]}` · `403 {ok:false, error:"verification_failed"}` or `"forbidden_origin"` · `405` for anything other than POST · `413` · `502 {ok:false, error:"delivery_failed"}` when the email can't be sent (the form then shows the phone number; nothing is stored, D-17).
 
-Order of checks (as built in `src/contact.js`): method → Origin → body size → JSON → honeypot → validate → Turnstile → INSERT into D1 → email → `UPDATE email_sent = 1`.
+Order of checks (as built in `src/contact.js`): method → Origin → body size → JSON → honeypot → validate → Turnstile → email.
 
 The email sent to the owner has the subject `New repair enquiry — <device>`, `reply-to` set to the customer's email, and a plain-text body listing every field, the quote, and the time in Australia/Melbourne.
 

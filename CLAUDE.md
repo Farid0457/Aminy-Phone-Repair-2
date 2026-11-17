@@ -19,18 +19,17 @@ A marketing site with an instant-quote tool for **Aminy Phone Repair**, a walk-i
 7. Ask before you deploy (`npm run deploy`), push, or change Cloudflare settings. These are actions other people see. **A push to `main` is a deploy:** Cloudflare Workers Builds rebuilds the live Worker `aminy-phone-repair-2` from GitHub `Farid0457/Aminy-Phone-Repair-2` on every push.
 
 ## Where things stand
-See the "Current status" block at the top of `docs/implementation-plan.md`. In short: Phases 0–1 are done (1.6 needs the owner's axe and Narrator checks), the contact API and the admin API (2.7) are built, and the live D1 database `aminy-db` exists. The admin page (2.8) is next.
+See the "Current status" block at the top of `docs/implementation-plan.md`. In short: Phases 0–1 are done (1.6 needs the owner's axe and Narrator checks), the contact API is built, and enquiries are **email only, with no database** (D-17, 2026-11-17). Next is task 2.5 (Resend), once the owner has done to-do (d).
 
 ## Layout (Phase 0 done)
 ```
 public/            served as-is: index.html, legal pages, css/, js/, assets/, _headers
 public/js/data/prices.js   all quote pricing data (edit prices here)
-src/               Worker: worker.js (router), contact.js, validate.js, email.js, http.js (JSON helper), access.js + admin.js (admin API)
-migrations/        D1 schema, numbered SQL files (never edit one that's been applied)
+src/               Worker: worker.js (router), contact.js, validate.js, email.js, http.js (JSON helper)
 test/              node:test unit tests
-scripts/           smoke-contact.mjs, smoke-admin.mjs (make-images.mjs comes in Phase 4)
+scripts/           smoke-contact.mjs (make-images.mjs comes in Phase 4)
 docs/              plans, decisions, owner guides
-wrangler.jsonc     Worker aminy-phone-repair-2 + assets config, D1 binding DB, vars (EMAIL_PROVIDER, MAIL_FROM, MAIL_TO, ALLOWED_ORIGINS)
+wrangler.jsonc     Worker aminy-phone-repair-2 + assets config, vars (EMAIL_PROVIDER, MAIL_FROM, MAIL_TO, ALLOWED_ORIGINS)
 ```
 
 ## Commands
@@ -39,12 +38,8 @@ npm install            # once
 npm run dev            # wrangler dev → http://localhost:8787 (site + API, uses .dev.vars)
 npm test               # node --test test/
 npm run smoke          # POST sample payloads to BASE_URL (default localhost:8787)
-npm run smoke:admin    # admin API checks (local: needs ADMIN_DEV_BYPASS=true in .dev.vars)
 npm run deploy         # wrangler deploy (ask first; pushing to main also deploys)
 npx wrangler tail      # live logs from production
-npm run db:migrate:local   # create/update the local D1 tables (once per machine)
-npm run db:migrate:remote  # apply new migrations to the LIVE database (ask first)
-npm run db:enquiries       # list the latest local enquiries
 ```
 Local dev uses `EMAIL_PROVIDER=log` (emails are printed to the console) and the Turnstile test keys from `.dev.vars.example`.
 

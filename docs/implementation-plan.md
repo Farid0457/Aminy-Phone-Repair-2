@@ -6,13 +6,13 @@ This is the step-by-step plan for Claude Code. Work through the phases **in orde
 
 **🧑 Manual:** some tasks depend on steps only the owner can do. These are marked with 🧑 and a link to the guide in `docs/manual/`. Claude Code must **stop and ask** instead of inventing values. Any value still marked `TBD` in `docs/manual/02-business-info.md` counts as missing.
 
-Status key: `[ ]` todo · `[~]` in progress or partly done · `[x]` done · `[!]` blocked (waiting on 🧑)
+Status key: `[ ]` todo · `[~]` in progress or partly done · `[x]` done · `[!]` blocked (waiting on 🧑) · `[-]` dropped
 
-### Current status (2026-11-14)
+### Current status (2026-11-17)
 
-- **Done:** Phase 0; Phase 1 except the manual checks in 1.6; Phase 2 tasks 2.0–2.3 and 2.7 (admin API). The site auto-deploys to Cloudflare from GitHub `main` (Worker `aminy-phone-repair-2`, D-15).
-- **Partly done:** 1.6 (owner's axe + Narrator checks), 2.4 (form not yet tested by hand in a browser), 2.9 (live D1 created and migrated; Access not set up), 6.1 (live on workers.dev; live smoke test not run).
-- **Next for Claude Code:** 2.8 Admin page. The owner checks each change in the browser before it's committed.
+- **Done:** Phase 0; Phase 1 except the manual checks in 1.6; Phase 2 tasks 2.1–2.3. **Enquiries are email only (D-17):** the database and admin tasks (2.0, 2.7–2.9) were dropped on 2026-11-17. The site auto-deploys to Cloudflare from GitHub `main` (Worker `aminy-phone-repair-2`, D-15).
+- **Partly done:** 1.6 (owner's axe + Narrator checks), 2.4 (form not yet tested by hand in a browser), 6.1 (live on workers.dev; live smoke test not run).
+- **Next for Claude Code:** 2.5 Switch to Resend, once the owner has done to-do (d). The owner checks each change in the browser before it's committed.
 - **Waiting on the owner:** see the to-do list in [manual/README.md](manual/README.md#your-to-do-list) (prices, social links, accessibility checks, Turnstile + email setup, domain).
 
 | Phase | Goal | Blocked by 🧑 |
@@ -102,13 +102,12 @@ Status key: `[ ]` todo · `[~]` in progress or partly done · `[x]` done · `[!]
 
 ---
 
-## Phase 2: Backend (contact API, database, admin) (D-02, D-03, D-13, D-14)
+## Phase 2: Backend (contact API, email) (D-02, D-03, D-17)
 
-Review checkpoints with the owner: **B1** = 2.0 · **B2** = 2.1–2.4 · **B3** = 2.7–2.8 · **B4** = 2.9 + 2.5
+Review checkpoints with the owner: **B2** = 2.1–2.4 · **B4** = 2.5
 
-### [x] 2.0 D1 database (B1)
-- `migrations/0001_create_enquiries.sql` (the `enquiries` table, with a status check and indexes), the `d1_databases` binding `DB` in `wrangler.jsonc` (placeholder id until 2.9), and the npm scripts `db:migrate:local`, `db:migrate:remote` and `db:enquiries`.
-- **Accept:** `npm run db:migrate:local` applies the migration, `npm run db:enquiries` returns `[]`, and an invalid status is rejected by the CHECK constraint.
+### [-] 2.0 D1 database (dropped, D-17)
+- *Built on 2026-11-14, removed on 2026-11-17: enquiries are email only.*
 
 ### [x] 2.1 Validation module + tests
 - *Done: `npm test` passes (13 tests).*
@@ -126,9 +125,9 @@ Review checkpoints with the owner: **B1** = 2.0 · **B2** = 2.1–2.4 · **B3** 
 - **Accept:** with `log`, a submission prints a well-formed email in the `wrangler dev` console.
 
 ### [x] 2.3 `/api/contact` handler
-- *Done: `npm run smoke` passes all 8 cases (200, 400, 200 honeypot, 400, 403, 403, 413, 405), and the enquiry is saved to local D1 (checked 2026-11-14).*
-- `src/contact.js`. Order of checks: method → Origin → body size → JSON parse → honeypot → validate → Turnstile siteverify (`POST https://challenges.cloudflare.com/turnstile/v0/siteverify` with `secret`, `response` and `remoteip` from `CF-Connecting-IP`) → **INSERT into D1** → send email → `UPDATE email_sent = 1`.
-- If the email fails but the database insert worked, still return `200 {ok:true}`. The enquiry is safe and shows in the admin page with "email not sent". Return 502 only if the database insert fails **and** the email fails.
+- *Done: `npm run smoke` passes all 8 cases (200, 400, 200 honeypot, 400, 403, 403, 413, 405), checked 2026-11-14; re-checked as email only on 2026-11-17).*
+- `src/contact.js`. Order of checks: method → Origin → body size → JSON parse → honeypot → validate → Turnstile siteverify (`POST https://challenges.cloudflare.com/turnstile/v0/siteverify` with `secret`, `response` and `remoteip` from `CF-Connecting-IP`) → send email.
+- If the email fails, return `502 delivery_failed` so the form shows the phone-number fallback (no database, D-17).
 - Return JSON as described in the contract, with `Cache-Control: no-store`.
 - Wire it into `src/worker.js`.
 - `scripts/smoke-contact.mjs` POSTs a valid payload, an invalid one, a honeypot one and a wrong-method request to `process.env.BASE_URL ?? 'http://localhost:8787'`, then prints the results.
@@ -153,29 +152,8 @@ Review checkpoints with the owner: **B1** = 2.0 · **B2** = 2.1–2.4 · **B3** 
 - Add the `send_email` binding to `wrangler.jsonc`, then set `EMAIL_PROVIDER: "cloudflare"` and `MAIL_FROM: "quotes@<domain>"`.
 - **Accept:** a test enquiry arrives. The Resend key can then be deleted (`wrangler secret delete RESEND_API_KEY`).
 
-### [x] 2.7 Admin API (B3)
-- *Done (e5ff435): 38 unit tests pass (incl. expired, wrong aud, bad signature, bypass refused on a non-local host); `npm run smoke:admin` passes all 23 local cases. Live, the API refuses every request (503) until Access is set up in 2.9.*
-- `src/admin.js`, mounted at `/api/admin/*`. Every request first passes `requireAdmin(request, env)`, which verifies the `Cf-Access-Jwt-Assertion` JWT (RS256, using the keys from `https://<ACCESS_TEAM_DOMAIN>/cdn-cgi/access/certs`, cached; `aud` must include `ACCESS_AUD`; `exp` is checked). It allows the dev bypass only when `ADMIN_DEV_BYPASS === 'true'` **and** the hostname is localhost or 127.0.0.1.
-- Routes:
-  - `GET /api/admin/enquiries?status=&q=&limit=50&before=<id>`: newest first, with search on name, email, phone and device, plus counts per status.
-  - `GET /api/admin/enquiries/:id`
-  - `PATCH /api/admin/enquiries/:id` with `{status?, notes?}`: validate the status against the allowed list and keep notes to 2000 characters or fewer; sets `updated_at`.
-  - `DELETE /api/admin/enquiries/:id`: only allowed when the status is `done` or `spam`.
-- All queries use `prepare().bind()`. **Never build SQL by joining strings together.**
-- **Accept:** unit tests for the JWT checks (expired, wrong aud, bad signature, bypass refused on a non-local host). Smoke tests for list, filter, patch, delete-rule and 401 without a token.
-
-### [ ] 2.8 Admin page (B3)
-- `public/admin/index.html`, `admin.css` and `admin.js`, in the same brand style as the site, with `<meta name="robots" content="noindex">`.
-- A list of enquiries with status filter tabs (with counts), search, and "Load more". Each row shows the date (Melbourne time), name, device, quote and a status badge. A ⚠ appears if the email wasn't sent.
-- The detail panel shows every field, `tel:` and `mailto:` buttons, a status dropdown, notes with Save, and Delete (for done or spam only, with an in-page confirmation step).
-- `/admin` is added to `robots.txt` as `Disallow`.
-- **Accept:** works with keyboard only and on a phone screen. Status and notes changes are saved after a reload.
-
-### [~] 2.9 Go live: remote database + Cloudflare Access (B4) 🧑 03-cloudflare-setup §2, §10
-- *Partly done (2026-11-14): Wrangler logged in, `aminy-db` created, real `database_id` in `wrangler.jsonc`, `npm run db:migrate:remote` applied. Still to do: Access (03 §10) and the vars, after 2.7–2.8.*
-- The owner runs `npx wrangler login`. Then run `npx wrangler d1 create aminy-db`, put the real `database_id` in `wrangler.jsonc`, and run `npm run db:migrate:remote`.
-- The owner sets up Access (03 §10). Put `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD` in `vars`, then deploy.
-- **Accept:** on the live site, `/admin` asks for an email PIN, and after logging in the owner sees enquiries. `curl` to `/api/admin/enquiries` without a login returns 401 or 403.
+### [-] 2.7–2.9 Admin API, admin page, Cloudflare Access (dropped, D-17)
+- *The admin API was built (e5ff435) and removed on 2026-11-17. The admin page and Access were never built. The owner reads enquiries in their inbox.*
 
 ---
 
