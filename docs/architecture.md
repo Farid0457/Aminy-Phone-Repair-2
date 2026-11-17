@@ -49,11 +49,15 @@ aminy-v2-phone/
 │   ├── validate.js           # pure validation functions (unit-tested)
 │   ├── email.js              # providers: log | resend | cloudflare
 │   ├── http.js               # json() helper: JSON + Cache-Control: no-store
-│   └── admin.js              # (planned, 2.7) /api/admin/* with Access JWT check
+│   ├── access.js             # requireAdmin(): Cloudflare Access JWT check (D-14)
+│   └── admin.js              # /api/admin/enquiries list, get, patch, delete
 ├── test/
-│   └── validate.test.js      # node:test unit tests
+│   ├── validate.test.js      # node:test unit tests: contact form
+│   ├── admin-validate.test.js  # admin input checks
+│   └── access.test.js        # Access JWT checks
 ├── scripts/
 │   ├── smoke-contact.mjs     # POSTs sample payloads to a running server
+│   ├── smoke-admin.mjs       # exercises /api/admin/* (npm run smoke:admin)
 │   └── make-images.mjs       # (planned, 4.3) renders og-image.png + icons from SVG
 ├── public/                   # ← everything here is publicly served
 │   ├── index.html            # still has an inline <script type="module"> until 5.1

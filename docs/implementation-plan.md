@@ -10,9 +10,9 @@ Status key: `[ ]` todo · `[~]` in progress or partly done · `[x]` done · `[!]
 
 ### Current status (2026-11-14)
 
-- **Done:** Phase 0; Phase 1 except the manual checks in 1.6; Phase 2 tasks 2.0–2.3. The site auto-deploys to Cloudflare from GitHub `main` (Worker `aminy-phone-repair-2`, D-15).
+- **Done:** Phase 0; Phase 1 except the manual checks in 1.6; Phase 2 tasks 2.0–2.3 and 2.7 (admin API). The site auto-deploys to Cloudflare from GitHub `main` (Worker `aminy-phone-repair-2`, D-15).
 - **Partly done:** 1.6 (owner's axe + Narrator checks), 2.4 (form not yet tested by hand in a browser), 2.9 (live D1 created and migrated; Access not set up), 6.1 (live on workers.dev; live smoke test not run).
-- **Next for Claude Code:** 2.7 Admin API → 2.8 Admin page. The owner checks each change in the browser before it's committed.
+- **Next for Claude Code:** 2.8 Admin page. The owner checks each change in the browser before it's committed.
 - **Waiting on the owner:** see the to-do list in [manual/README.md](manual/README.md#your-to-do-list) (prices, social links, accessibility checks, Turnstile + email setup, domain).
 
 | Phase | Goal | Blocked by 🧑 |
@@ -153,7 +153,8 @@ Review checkpoints with the owner: **B1** = 2.0 · **B2** = 2.1–2.4 · **B3** 
 - Add the `send_email` binding to `wrangler.jsonc`, then set `EMAIL_PROVIDER: "cloudflare"` and `MAIL_FROM: "quotes@<domain>"`.
 - **Accept:** a test enquiry arrives. The Resend key can then be deleted (`wrangler secret delete RESEND_API_KEY`).
 
-### [ ] 2.7 Admin API (B3)
+### [x] 2.7 Admin API (B3)
+- *Done (e5ff435): 38 unit tests pass (incl. expired, wrong aud, bad signature, bypass refused on a non-local host); `npm run smoke:admin` passes all 23 local cases. Live, the API refuses every request (503) until Access is set up in 2.9.*
 - `src/admin.js`, mounted at `/api/admin/*`. Every request first passes `requireAdmin(request, env)`, which verifies the `Cf-Access-Jwt-Assertion` JWT (RS256, using the keys from `https://<ACCESS_TEAM_DOMAIN>/cdn-cgi/access/certs`, cached; `aud` must include `ACCESS_AUD`; `exp` is checked). It allows the dev bypass only when `ADMIN_DEV_BYPASS === 'true'` **and** the hostname is localhost or 127.0.0.1.
 - Routes:
   - `GET /api/admin/enquiries?status=&q=&limit=50&before=<id>`: newest first, with search on name, email, phone and device, plus counts per status.
