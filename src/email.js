@@ -15,10 +15,10 @@ export function melbourneTime(date = new Date()) {
 }
 
 /** Build subject + plain-text body for an enquiry. */
-export function formatEnquiry(data, { id, adminUrl } = {}) {
+export function formatEnquiry(data) {
   const subject = oneLine(`New repair enquiry — ${data.device}`).slice(0, 180);
   const lines = [
-    `New enquiry${id ? ` #${id}` : ''} from the website`,
+    'New enquiry from the website',
     `Received: ${melbourneTime()}`,
     '',
     `Name:    ${data.firstName} ${data.lastName}`,
@@ -30,7 +30,6 @@ export function formatEnquiry(data, { id, adminUrl } = {}) {
     lines.push(`Quote:   ${data.quote.model} — ${data.quote.issue} — $${data.quote.total} incl. GST (online estimate)`);
   }
   lines.push('', 'Message:', data.message || '—', '');
-  if (adminUrl) lines.push(`Open in admin: ${adminUrl}`, '');
   lines.push('Reply to this email to answer the customer directly.');
   return { subject, text: lines.join('\n') };
 }
@@ -39,11 +38,10 @@ export function formatEnquiry(data, { id, adminUrl } = {}) {
  * Send the enquiry email. Throws on failure.
  * @param {object} env  Worker env
  * @param {object} data validated enquiry (from validateContact)
- * @param {{id?: number, adminUrl?: string}} meta
  */
-export async function sendEnquiry(env, data, meta = {}) {
+export async function sendEnquiry(env, data) {
   const provider = env.EMAIL_PROVIDER || 'log';
-  const { subject, text } = formatEnquiry(data, meta);
+  const { subject, text } = formatEnquiry(data);
   const replyTo = oneLine(data.email);
 
   if (provider === 'log') {

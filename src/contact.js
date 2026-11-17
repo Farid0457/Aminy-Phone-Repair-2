@@ -1,6 +1,6 @@
 /**
  * POST /api/contact — website enquiry form.
- * Order: method → origin → size → JSON → honeypot → validate → Turnstile → save (D1) → email.
+ * Order: method → origin → size → JSON → honeypot → validate → Turnstile → email (D-17: no database).
  * Contract: docs/architecture.md
  */
 import { json } from './http.js';
@@ -43,19 +43,6 @@ export async function verifyTurnstile(token, request, env) {
   }
 }
 
-async function saveEnquiry(env, d) {
-  const row = await env.DB.prepare(
-    `INSERT INTO enquiries
-       (first_name, last_name, email, phone, device, message, quote_model, quote_issue, quote_total)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-     RETURNING id`
-  ).bind(
-    d.firstName, d.lastName, d.email, d.phone, d.device, d.message,
-    d.quote?.model ?? null, d.quote?.issue ?? null, d.quote?.total ?? null
-  ).first();
-  return row.id;
-}
-
 export async function handleContact(request, env) {
   if (request.method !== 'POST') {
     return json({ ok: false, error: 'method_not_allowed' }, 405, { Allow: 'POST' });
@@ -74,7 +61,7 @@ export async function handleContact(request, env) {
     return json({ ok: false, error: 'invalid_json', fields: [] }, 400);
   }
 
-  // Bots that fill the hidden field get a fake success and nothing is stored or sent.
+  // Bots that fill the hidden field get a fake success and nothing is sent.
   if (isHoneypotFilled(body)) return json({ ok: true });
 
   const v = validateContact(body);
@@ -84,23 +71,13 @@ export async function handleContact(request, env) {
     return json({ ok: false, error: 'verification_failed' }, 403);
   }
 
-  const data = v.data;
-  let id = null;
   try {
-    id = await saveEnquiry(env, data);
-  } catch (err) {
-    console.error('D1 insert failed:', err);
-  }
-
-  const origin = new URL(request.url).origin;
-  try {
-    await sendEnquiry(env, data, { id, adminUrl: id ? `${origin}/admin/?id=${id}` : undefined });
-    if (id) await env.DB.prepare('UPDATE enquiries SET email_sent = 1 WHERE id = ?').bind(id).run();
+    await sendEnquiry(env, v.data);
   } catch (err) {
     console.error('Email delivery failed:', err);
-    // Saved in the database → the owner will still see it in /admin.
-    if (!id) return json({ ok: false, error: 'delivery_failed' }, 502);
+    // No database (D-17): the form shows the shop's phone number instead.
+    return json({ ok: false, error: 'delivery_failed' }, 502);
   }
 
-  return json({ ok: true, id });
+  return json({ ok: true });
 }

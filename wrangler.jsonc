@@ -15,18 +15,6 @@
 
   "observability": { "enabled": true },
 
-  // D1 database (D-13). The live database "aminy-db" was created on 2026-11-14 and
-  // migration 0001 is applied remotely. `npm run dev` uses a local copy in
-  // .wrangler/state instead — run `npm run db:migrate:local` once to create its tables.
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "aminy-db",
-      "database_id": "80b99810-b5ab-4bb1-8bee-782abb120fd8",
-      "migrations_dir": "migrations"
-    }
-  ],
-
   "vars": {
     // log | resend | cloudflare  (D-02). "log" prints emails to the console — local/dev only.
     "EMAIL_PROVIDER": "log",

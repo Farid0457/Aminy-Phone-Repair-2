@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════
    CONTACT — enquiry form → POST /api/contact
-   (saved to the database + emailed to the shop)
+   (emailed to the shop — no database, D-17)
    ═══════════════════════════════════════════ */
 
 const BUSINESS_EMAIL = 'info@aminyrepair.com.au';
