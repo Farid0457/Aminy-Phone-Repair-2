@@ -32,7 +32,8 @@
   <link rel="stylesheet" href="css/footer.css" />
 
   <!-- Cloudflare Turnstile (spam protection for the contact form) -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <!-- The script itself is loaded by js/contact.js, which picks the site key (test key on localhost) -->
+  <link rel="preconnect" href="https://challenges.cloudflare.com">
 </head>
 <body>
 
@@ -642,8 +643,9 @@
           <label for="website">Website</label>
           <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
         </div>
-        <!-- Turnstile spam check. Site key: TEST key (always passes) until docs/manual/03-cloudflare-setup.md §5 -->
-        <div class="cf-turnstile" id="turnstile" data-sitekey="1x00000000000000000000AA" data-size="flexible" data-theme="light"></div>
+        <!-- Turnstile spam check (03-cloudflare-setup §5). Real site key (public); works only on the
+             hostnames set in the Cloudflare dashboard. On localhost, js/contact.js uses the test key instead. -->
+        <div class="cf-turnstile" id="turnstile" data-sitekey="0x4AAAAAAGEuKrDQdFuJ387H"></div>
         <button type="submit" class="btn-primary btn-full" id="contactSubmit">Send Enquiry →</button>
         <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
         <p class="form-note">We reply within 1 hour during business hours.</p>

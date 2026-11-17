@@ -11,6 +11,32 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// ── Turnstile (spam check) ──
+// The real site key is in index.html (data-sitekey) and only works on the hostnames set in
+// the Cloudflare dashboard. On localhost we use Cloudflare's always-pass TEST site key,
+// which pairs with the test secret in .dev.vars.
+const TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA';
+const LOCAL_HOSTS = ['localhost', '127.0.0.1'];
+let turnstileId;
+
+function renderTurnstile() {
+  const box = document.getElementById('turnstile');
+  if (!box || !window.turnstile || turnstileId !== undefined) return;
+  const sitekey = LOCAL_HOSTS.includes(location.hostname) ? TURNSTILE_TEST_SITE_KEY : box.dataset.sitekey;
+  turnstileId = window.turnstile.render(box, { sitekey, size: 'flexible', theme: 'light' });
+}
+
+/** Load api.js once, after the onload callback exists (so there's no load-order race). */
+function loadTurnstile() {
+  if (!document.getElementById('turnstile') || document.querySelector('script[data-turnstile]')) return;
+  window.aminyTurnstileReady = renderTurnstile;
+  const s = document.createElement('script');
+  s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=aminyTurnstileReady';
+  s.async = true;
+  s.dataset.turnstile = '';
+  document.head.append(s);
+}
+
 // ── Quote hand-off from the instant-quote tool ──
 let attachedQuote = null;   // { model, issue, total }
 let autoDevice = '';        // the #device text we filled in, so we only clear our own text
@@ -100,7 +126,8 @@ export function setupContactForm() {
     form.setAttribute('aria-busy', String(on));
   }
 
-  const resetTurnstile = () => { try { window.turnstile?.reset('#turnstile'); } catch { /* not loaded */ } };
+  loadTurnstile();
+  const resetTurnstile = () => { try { if (turnstileId !== undefined) window.turnstile.reset(turnstileId); } catch { /* not loaded */ } };
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
