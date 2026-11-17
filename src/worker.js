@@ -7,6 +7,7 @@
  */
 import { json } from './http.js';
 import { handleContact } from './contact.js';
+import { handleAdmin } from './admin.js';
 
 export default {
   async fetch(request, env) {
@@ -15,6 +16,7 @@ export default {
     if (url.pathname.startsWith('/api/')) {
       try {
         if (url.pathname === '/api/contact') return await handleContact(request, env);
+        if (url.pathname === '/api/admin' || url.pathname.startsWith('/api/admin/')) return await handleAdmin(request, env, url);
         return json({ ok: false, error: 'not_found' }, 404);
       } catch (err) {
         console.error('Unhandled API error:', err);

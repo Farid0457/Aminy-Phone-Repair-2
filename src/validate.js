@@ -80,3 +80,80 @@ export function validateContact(body) {
 
   return { ok: true, data };
 }
+
+// ─────────────────────────────────────────
+// Admin API input (task 2.7) — also pure
+// ─────────────────────────────────────────
+
+/** Must match the CHECK constraint in migrations/0001_create_enquiries.sql. */
+export const ENQUIRY_STATUSES = ['new', 'contacted', 'booked', 'done', 'spam'];
+/** Only finished or junk enquiries may be deleted. */
+export const DELETABLE_STATUSES = ['done', 'spam'];
+
+export const ADMIN_LIMITS = { notes: 2000, query: 100, pageDefault: 50, pageMax: 100 };
+
+/** A positive integer id from a URL segment, or null. */
+export function parseId(segment) {
+  return typeof segment === 'string' && /^[1-9]\d{0,15}$/.test(segment) ? Number(segment) : null;
+}
+
+/** Escape LIKE wildcards so a search for "50%" matches literally (used with ESCAPE '\'). */
+export function escapeLike(s) {
+  return s.replace(/[\\%_]/g, '\\$&');
+}
+
+/**
+ * GET /api/admin/enquiries query string.
+ * @param {{get(name: string): string|null}} params URLSearchParams
+ * @returns {{ok: true, data: {status: string|null, q: string, limit: number, before: number|null}} | {ok: false, error: string}}
+ */
+export function parseListQuery(params) {
+  const rawStatus = (params.get('status') || '').trim();
+  let status = null;
+  if (rawStatus && rawStatus !== 'all') {
+    if (!ENQUIRY_STATUSES.includes(rawStatus)) return { ok: false, error: 'invalid_status' };
+    status = rawStatus;
+  }
+
+  const q = clean(params.get('q'));
+  if (q.length > ADMIN_LIMITS.query) return { ok: false, error: 'query_too_long' };
+
+  const n = Number.parseInt(params.get('limit') || '', 10);
+  const limit = Number.isFinite(n) ? Math.min(Math.max(n, 1), ADMIN_LIMITS.pageMax) : ADMIN_LIMITS.pageDefault;
+
+  const rawBefore = params.get('before');
+  let before = null;
+  if (rawBefore) {
+    before = parseId(rawBefore);
+    if (!before) return { ok: false, error: 'invalid_before' };
+  }
+
+  return { ok: true, data: { status, q, limit, before } };
+}
+
+/**
+ * PATCH /api/admin/enquiries/:id body: {status?, notes?}
+ * @returns {{ok: true, data: {status: string|null, notes: string|null}} | {ok: false, error: string, fields: string[]}}
+ */
+export function validateAdminPatch(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return { ok: false, error: 'invalid_body', fields: [] };
+  }
+  const unknown = Object.keys(body).filter((k) => k !== 'status' && k !== 'notes');
+  if (unknown.length) return { ok: false, error: 'unknown_fields', fields: unknown };
+  if (body.status === undefined && body.notes === undefined) {
+    return { ok: false, error: 'nothing_to_update', fields: [] };
+  }
+
+  const data = { status: null, notes: null };
+  if (body.status !== undefined) {
+    if (!ENQUIRY_STATUSES.includes(body.status)) return { ok: false, error: 'invalid_status', fields: ['status'] };
+    data.status = body.status;
+  }
+  if (body.notes !== undefined) {
+    if (typeof body.notes !== 'string') return { ok: false, error: 'invalid_notes', fields: ['notes'] };
+    data.notes = clean(body.notes, true);
+    if (data.notes.length > ADMIN_LIMITS.notes) return { ok: false, error: 'too_long', fields: ['notes'] };
+  }
+  return { ok: true, data };
+}
