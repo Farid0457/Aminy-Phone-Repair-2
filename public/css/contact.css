@@ -128,6 +128,7 @@
   font-size: 0.85rem;
   color: var(--text);
 }
+.quote-attached[hidden] { display: none; }   /* display:flex above would otherwise override [hidden] */
 .quote-attached strong { color: var(--accent-text); }
 .quote-attached-remove {
   flex: none;
