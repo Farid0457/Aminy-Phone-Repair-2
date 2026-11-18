@@ -44,7 +44,7 @@ npx wrangler tail      # live logs from production
 Local dev uses `EMAIL_PROVIDER=log` (emails are printed to the console) and the Turnstile test keys from `.dev.vars.example`.
 
 ## Code conventions
-- **JS:** native ES modules, no dependencies in the browser. Each feature module exports a `setupX()`/`buildX()` called from `public/js/main.js` (`index.html` has the inline module until Phase 5.1). Build DOM with `createElement`/`textContent`. Use `innerHTML` only for trusted static SVG strings.
+- **JS:** native ES modules, no dependencies in the browser. Each feature module exports a `setupX()`/`buildX()` called from `public/js/main.js`. **No inline scripts or `on*=` handlers**: the CSP in `public/_headers` blocks them (5.1). A new outside script, frame or font host must be added to the CSP. Build DOM with `createElement`/`textContent`. Use `innerHTML` only for trusted static SVG strings.
 - **CSS:** one file per section in `public/css/`, loaded in order from `index.html` (`base.css` first). Use the design tokens (CSS custom properties) in `base.css` rather than raw colours. Breakpoints in use are 1100, 1000, 900, 720, 640, 560, 480 and 400px.
 - **Accessibility is required:** every interactive element is a real `<button>`/`<a>`, and decorative SVGs get `aria-hidden="true" focusable="false"`. Keep `:focus-visible` styles, respect `prefers-reduced-motion` in both CSS and JS, and give form fields a `<label>`.
 - **Locale:** Australian English ("colour", "labour"), AUD, prices **include GST**, phone format `04XX XXX XXX` / `03 XXXX XXXX`, time zone `Australia/Melbourne`.

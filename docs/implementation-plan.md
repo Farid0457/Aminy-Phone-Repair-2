@@ -207,7 +207,8 @@ Before starting, read `docs/manual/02-business-info.md`. **Stop and list** any `
 
 ## Phase 5: Hardening and QA
 
-### [ ] 5.1 `public/_headers`
+### [x] 5.1 `public/_headers`
+- *Done (2026-11-18): inline script moved to `js/main.js`. Headers checked with curl (`_headers` itself is not served: 404). Browser check at 1280 and 375px through the quote tool, mobile menu, Turnstile and a form submission: **0 CSP violations**. Added `default-src 'self'`, `object-src 'none'`, `base-uri 'self'`, `form-action 'self'` and `frame-ancestors 'none'` to the planned CSP.*
 - Applied to every page (`/*`): `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=()`, `X-Frame-Options: DENY` and a **Content-Security-Policy** that allows:
   - `script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com`
   - `frame-src https://challenges.cloudflare.com`

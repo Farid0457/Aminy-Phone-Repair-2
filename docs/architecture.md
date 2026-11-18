@@ -52,12 +52,14 @@ aminy-v2-phone/
 │   ├── smoke-contact.mjs     # POSTs sample payloads to a running server
 │   └── make-images.mjs       # (planned, 4.3) renders og-image.png + icons from SVG
 ├── public/                   # ← everything here is publicly served
-│   ├── index.html            # still has an inline <script type="module"> until 5.1
+│   ├── index.html            # loads js/main.js (no inline scripts, CSP)
+│   ├── _headers              # security headers + CSP for all pages, cache for css/js (5.1)
 │   ├── 404.html  privacy.html  terms.html  warranty.html      # (planned, 3.3)
-│   ├── robots.txt  sitemap.xml  _headers  site.webmanifest    # (planned, 4.x / 5.1)
+│   ├── robots.txt  sitemap.xml  site.webmanifest              # (planned, 4.x)
 │   ├── assets/               # (planned, 4.3) og-image.png, apple-touch-icon.png, icons
 │   ├── css/                  # one stylesheet per section, base.css first (+ legal.css in 3.3)
 │   └── js/
+│       ├── main.js           # entry point: calls each setupX()/buildX()
 │       ├── animations.js  navbar.js  contact.js  quote.js
 │       └── data/prices.js    # all pricing data (D-05)
 └── docs/
