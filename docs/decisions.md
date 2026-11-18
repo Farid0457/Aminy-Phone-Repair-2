@@ -100,3 +100,8 @@ The browser sends the form to `POST /api/contact`. The Worker validates it, chec
 - Removed: `src/admin.js`, `src/access.js`, the admin part of `src/validate.js`, their tests, `scripts/smoke-admin.mjs`, `migrations/`, the `d1_databases` binding and the `db:*` / `smoke:admin` npm scripts. Plan tasks 2.0 and 2.7 are reverted, and 2.8–2.9 are dropped. Cloudflare Access isn't needed.
 - Privacy is simpler: the website keeps no copy of enquiries. They exist only in the owner's inbox (and the email provider's logs).
 - The live D1 database `aminy-db` is no longer used. The owner can delete it in the dashboard (Storage & Databases → D1 → aminy-db → Settings → Delete), or Claude Code can run `npx wrangler d1 delete aminy-db` after asking. Leaving it costs nothing.
+
+## D-18 Fonts self-hosted; CSS and JS revalidated on every visit — **Accepted** (task 5.2, 2026-11-18)
+
+- **Fonts:** Sora, Manrope and IBM Plex Mono (latin subset, SIL OFL 1.1) are served from `public/assets/fonts/` instead of Google Fonts. That removes two outside connections before the first paint, and visitors' browsers no longer contact Google. Font files are cached for a year (`immutable`): a changed font must get a new file name.
+- **CSS and JS:** Cloudflare's default `max-age=0, must-revalidate` with an ETag (a cheap 304 when nothing changed). The 1-hour cache from 5.1 was removed: file names aren't versioned (no build step, D-11), so after a deploy a returning visitor could get the new page with old CSS or JS for up to an hour, which can break the page.

@@ -3,7 +3,7 @@
 | File | For | What |
 |---|---|---|
 | [remaining-work.md](remaining-work.md) | everyone | The original review: everything left before launch |
-| [decisions.md](decisions.md) | everyone | Decisions D-01…D-17 (hosting, email, quote display, deploys, email-only enquiries…). Edit the *Proposed* ones if you disagree. |
+| [decisions.md](decisions.md) | everyone | Decisions D-01…D-18 (hosting, email, quote display, deploys, email-only enquiries…). Edit the *Proposed* ones if you disagree. |
 | [architecture.md](architecture.md) | Claude Code | File layout, Cloudflare config, `/api/contact` contract |
 | [implementation-plan.md](implementation-plan.md) | Claude Code | Phased tasks 0.1 → 6.3 with acceptance criteria |
 | [manual/](manual/README.md) | **owner** | Steps only you can do: setup, business info, Cloudflare, launch |
