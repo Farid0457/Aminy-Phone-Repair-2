@@ -270,3 +270,18 @@
   .hero-card { padding: 24px 18px; border-radius: 20px; }
   .hero-card h2 { font-size: 1.4rem; }
 }
+
+/* ── Entrance: fade + rise, staggered. Pure CSS so it starts with the first paint
+   (no hide-then-show after the scripts load). Reduced motion: base.css turns it off. ── */
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(20px); }
+}
+.hero-eyebrow, .hero-headline, .hero-sub, .hero-actions, .hero-stats, .hero-card {
+  animation: heroIn 0.7s ease both;
+}
+.hero-eyebrow  { animation-delay: 0.1s; }
+.hero-headline { animation-delay: 0.3s; }
+.hero-sub      { animation-delay: 0.5s; }
+.hero-card     { animation-delay: 0.5s; }
+.hero-actions  { animation-delay: 0.7s; }
+.hero-stats    { animation-delay: 0.9s; }

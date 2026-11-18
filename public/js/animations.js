@@ -1,30 +1,8 @@
 /* ═══════════════════════════════════════════
-   ANIMATIONS — hero entrance + scroll reveal
+   ANIMATIONS — scroll reveal + exploded phone
    ═══════════════════════════════════════════ */
 
-// ── Hero entrance ──
-export function animateHero() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;   // show it as-is
-  const items = [
-    { el: document.querySelector('.hero-eyebrow'),  delay: 0.1 },
-    { el: document.querySelector('.hero-headline'), delay: 0.3 },
-    { el: document.querySelector('.hero-sub'),      delay: 0.5 },
-    { el: document.querySelector('.hero-actions'),  delay: 0.7 },
-    { el: document.querySelector('.hero-stats'),    delay: 0.9 },
-    { el: document.querySelector('.hero-card'),     delay: 0.5 },
-  ];
-
-  items.forEach(({ el, delay }) => {
-    if (!el) return;
-    el.style.opacity   = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`;
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      el.style.opacity   = '1';
-      el.style.transform = 'translateY(0)';
-    }));
-  });
-}
+// (The hero entrance is pure CSS: see the end of css/hero.css.)
 
 // ── Scroll reveal ──
 export function setupReveal() {
