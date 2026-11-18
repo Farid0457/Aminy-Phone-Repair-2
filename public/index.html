@@ -704,21 +704,8 @@
     </div>
   </footer>
 
-  <!-- Scripts — load as modules so they can import from each other -->
-  <script type="module">
-    import { animateHero, setupReveal, setupExplodedPhone } from './js/animations.js';
-    import { buildQuote }       from './js/quote.js';
-    import { setupContactForm } from './js/contact.js';
-    import './js/navbar.js';
-
-    document.addEventListener('DOMContentLoaded', () => {
-      animateHero();
-      setupReveal();
-      setupExplodedPhone();
-      buildQuote();
-      setupContactForm();
-    });
-  </script>
+  <!-- Entry point (ES module). No inline scripts: the CSP in _headers forbids them. -->
+  <script type="module" src="js/main.js"></script>
 
 </body>
 </html>

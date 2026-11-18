@@ -1,0 +1,18 @@
+# Response headers for static files (Cloudflare Workers static assets). Task 5.1.
+# /api/* responses come from the Worker and set their own headers (src/http.js).
+# CSP notes:
+#   challenges.cloudflare.com      = Turnstile (contact form spam check, D-03)
+#   *.cloudflareinsights.com       = Cloudflare Web Analytics (D-10, once turned on)
+#   style-src 'unsafe-inline'      = inline style attributes in the hero/exploded-phone SVG
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-Frame-Options: DENY
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com; frame-src https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
+/css/*
+  Cache-Control: public, max-age=3600
+
+/js/*
+  Cache-Control: public, max-age=3600
