@@ -218,9 +218,11 @@ Before starting, read `docs/manual/02-business-info.md`. **Stop and list** any `
   - `connect-src 'self' https://cloudflareinsights.com`
 - The current inline `<script type="module">` in index.html breaks a strict CSP, so move it into `public/js/main.js`.
 - Cache headers: `/css/*` and `/js/*` get `Cache-Control: public, max-age=3600`. HTML stays at the default (always revalidated).
+  - *Changed in 5.2 (D-18): CSS and JS went back to Cloudflare's default (revalidate every visit, 304 when unchanged), and fonts moved to `'self'` in the CSP.*
 - **Accept:** no CSP errors in the console on any page, including during Turnstile and a form submission.
 
-### [ ] 5.2 Performance
+### [~] 5.2 Performance
+- *Partly done (2026-11-18): fonts self-hosted in `assets/fonts/` (Google Fonts removed: no third-party connections, unused Manrope 800 dropped, the two above-the-fold fonts preloaded); hero entrance moved from JS to CSS (same look, starts with the first paint, honours reduced motion). Lighthouse mobile before, live: Performance 62–73, FCP 3.8–4.0 s. Local after: Performance 83–95, FCP 1.7–2.8 s. Still to do: re-measure on the live site after the push. Accessibility 94 has colour-contrast items, left for 5.3 because they change the design (owner decision).*
 - Fonts: check the three families are all needed and trim unused weights. Consider `<link rel="preload">` for the hero font.
 - Run Lighthouse on mobile. The target is **≥ 90** for Performance, Accessibility, Best Practices and SEO. Fix anything below that.
 

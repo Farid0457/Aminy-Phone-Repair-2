@@ -56,6 +56,7 @@ aminy-v2-phone/
 │   ├── _headers              # security headers + CSP for all pages, cache for css/js (5.1)
 │   ├── 404.html  privacy.html  terms.html  warranty.html      # (planned, 3.3)
 │   ├── robots.txt  sitemap.xml  site.webmanifest              # (planned, 4.x)
+│   ├── assets/fonts/         # self-hosted Sora, Manrope, IBM Plex Mono (woff2, OFL) + LICENSE.txt (5.2)
 │   ├── assets/               # (planned, 4.3) og-image.png, apple-touch-icon.png, icons
 │   ├── css/                  # one stylesheet per section, base.css first (+ legal.css in 3.3)
 │   └── js/
